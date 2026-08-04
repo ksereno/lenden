@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -15,6 +15,15 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Lenden",
   description: "Lending tracker for Lenden",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Lenden",
+  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#262624",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
