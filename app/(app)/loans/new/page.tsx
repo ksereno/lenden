@@ -67,6 +67,15 @@ export default async function NewLoanPage() {
           </label>
 
           <label className="flex flex-col gap-1 text-sm">
+            <span className="text-muted">Due date (optional)</span>
+            <input
+              type="date"
+              name="due_date"
+              className="rounded-lg border border-border bg-surface px-3 py-2 text-foreground focus:border-accent focus:outline-none"
+            />
+          </label>
+
+          <label className="flex flex-col gap-1 text-sm">
             <span className="text-muted">Term (optional)</span>
             <input
               type="text"

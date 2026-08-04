@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getBorrowers } from "@/lib/queries";
 import { getCurrentProfile } from "@/lib/currentProfile";
 import { addBorrower, deleteBorrower } from "./actions";
@@ -52,8 +53,11 @@ export default async function BorrowersPage({
                   <td className="px-4 py-2 text-muted">{b.contact_info || "—"}</td>
                   <td className="px-4 py-2 text-muted">{b.notes || "—"}</td>
                   {isOwner && (
-                    <td className="px-4 py-2 text-right">
-                      <form action={deleteBorrower}>
+                    <td className="px-4 py-2 text-right whitespace-nowrap">
+                      <Link href={`/borrowers/${b.id}/edit`} className="text-muted hover:text-foreground">
+                        Edit
+                      </Link>
+                      <form action={deleteBorrower} className="ml-3 inline">
                         <input type="hidden" name="borrower_id" value={b.id} />
                         <button type="submit" className="text-muted hover:text-red-400">
                           Remove

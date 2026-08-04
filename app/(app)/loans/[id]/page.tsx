@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLoan, getBorrower, getContributionsForLoan, getPaymentsForLoan, getProfiles } from "@/lib/queries";
 import { getCurrentProfile } from "@/lib/currentProfile";
@@ -6,7 +7,8 @@ import { formatMoney, formatPercent, formatDate } from "@/lib/format";
 import { FriendBadge } from "@/components/FriendBadge";
 import { StatusPill } from "@/components/StatusPill";
 import { StatCard } from "@/components/StatCard";
-import { addPayment, setLoanStatus } from "./actions";
+import { ConfirmDeleteButton } from "@/components/ConfirmDeleteButton";
+import { addPayment, setLoanStatus, deleteLoan } from "./actions";
 
 export default async function LoanDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -29,6 +31,7 @@ export default async function LoanDetailPage({ params }: { params: Promise<{ id:
   const isOwner = currentProfile?.role === "owner";
   const canAddPayment = currentProfile?.role === "owner" || currentProfile?.role === "contributor";
   const today = new Date().toISOString().slice(0, 10);
+  const isOverdue = loan.status === "open" && !!loan.due_date && loan.due_date < today;
 
   return (
     <div className="flex flex-col gap-8">
@@ -37,10 +40,33 @@ export default async function LoanDetailPage({ params }: { params: Promise<{ id:
           <h1 className="text-xl font-semibold text-foreground">{borrower?.name ?? "Unknown borrower"}</h1>
           <p className="mt-1 text-sm text-muted">
             {loan.interest_rate_percent}% flat · issued {formatDate(loan.date_issued)}
+            {loan.due_date && (
+              <>
+                {" · due "}
+                <span className={isOverdue ? "text-red-400" : undefined}>{formatDate(loan.due_date)}</span>
+                {isOverdue && " (overdue)"}
+              </>
+            )}
             {loan.term_description && ` · ${loan.term_description}`}
           </p>
         </div>
-        <StatusPill status={loan.status} />
+        <div className="flex items-center gap-3">
+          <StatusPill status={loan.status} />
+          {isOwner && (
+            <>
+              <Link href={`/loans/${loan.id}/edit`} className="text-sm text-muted hover:text-foreground">
+                Edit
+              </Link>
+              <ConfirmDeleteButton
+                action={deleteLoan.bind(null, loan.id)}
+                confirmMessage="Delete this loan permanently? This also removes its contributions and payment history."
+                className="text-sm text-muted hover:text-red-400"
+              >
+                Delete
+              </ConfirmDeleteButton>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">

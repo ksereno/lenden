@@ -29,6 +29,7 @@ export interface Loan {
   interest_rate_percent: number;
   interest_type: InterestType;
   date_issued: string;
+  due_date: string | null;
   term_description: string;
   status: LoanStatus;
   created_by: string;

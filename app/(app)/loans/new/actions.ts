@@ -8,6 +8,7 @@ export async function createLoan(formData: FormData) {
   const borrower_id = String(formData.get("borrower_id") ?? "");
   const interest_rate_percent = Number(formData.get("interest_rate_percent") ?? 0);
   const date_issued = String(formData.get("date_issued") ?? "");
+  const due_date = String(formData.get("due_date") ?? "").trim() || null;
   const term_description = String(formData.get("term_description") ?? "").trim();
 
   if (!borrower_id || !date_issued) return;
@@ -34,6 +35,7 @@ export async function createLoan(formData: FormData) {
       interest_rate_percent,
       interest_type: "flat",
       date_issued,
+      due_date,
       term_description,
       status: "open",
       created_by: user.id,

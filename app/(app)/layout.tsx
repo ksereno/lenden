@@ -10,6 +10,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   const navLinks = [
     { href: "/", label: "Dashboard" },
+    { href: "/loans", label: "Loans" },
     { href: "/borrowers", label: "Borrowers" },
     { href: "/reports", label: "Reports" },
     { href: "/me", label: "Me" },

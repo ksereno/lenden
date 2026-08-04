@@ -4,6 +4,8 @@ import { loanTotals, friendShares } from "@/lib/loanMath";
 import { formatMoney } from "@/lib/format";
 import { FriendBadge } from "@/components/FriendBadge";
 import { StatusPill } from "@/components/StatusPill";
+import { StatCard } from "@/components/StatCard";
+import { ShareBars } from "@/components/ShareBars";
 
 export default async function ReportsPage() {
   const [loans, borrowers, profiles, allContributions, allPayments] = await Promise.all([
@@ -36,16 +38,42 @@ export default async function ReportsPage() {
     return { loan, borrower: borrowerById.get(loan.borrower_id), totals: loanTotals(loan, payments) };
   });
 
+  const friendRows = [...byFriend.values()];
+  const totalLent = friendRows.reduce((sum, r) => sum + r.contributed, 0);
+  const totalInterest = friendRows.reduce((sum, r) => sum + r.interestEarned, 0);
+  const totalOutstanding = friendRows.reduce((sum, r) => sum + r.outstanding, 0);
+
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-10">
       <div>
         <h1 className="text-xl font-semibold text-foreground">Reports</h1>
         <p className="mt-1 text-sm text-muted">Aggregate view across every friend and every loan.</p>
       </div>
 
       <div>
-        <h2 className="mb-3 text-sm font-medium text-muted">By friend</h2>
-        <div className="overflow-x-auto rounded-lg border border-border">
+        <h2 className="mb-3 text-sm font-medium text-muted">Total of all of us</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <StatCard label="Total lent" value={formatMoney(totalLent)} />
+          <StatCard label="Total interest earned" value={formatMoney(totalInterest)} />
+          <StatCard label="Total outstanding" value={formatMoney(totalOutstanding)} />
+        </div>
+      </div>
+
+      <div>
+        <h2 className="mb-4 text-sm font-medium text-muted">By friend</h2>
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-3">
+          <ShareBars title="Lent" rows={friendRows.map((r) => ({ profile: r.profile, value: r.contributed }))} />
+          <ShareBars
+            title="Interest earned"
+            rows={friendRows.map((r) => ({ profile: r.profile, value: r.interestEarned }))}
+          />
+          <ShareBars
+            title="Awaiting payment"
+            rows={friendRows.map((r) => ({ profile: r.profile, value: r.outstanding }))}
+          />
+        </div>
+
+        <div className="mt-6 overflow-x-auto rounded-lg border border-border">
           <table className="w-full text-sm">
             <thead className="bg-surface text-left text-muted">
               <tr>
@@ -56,7 +84,7 @@ export default async function ReportsPage() {
               </tr>
             </thead>
             <tbody>
-              {[...byFriend.values()].map((row) => (
+              {friendRows.map((row) => (
                 <tr key={row.profile.id} className="border-t border-border">
                   <td className="px-4 py-2"><FriendBadge profile={row.profile} /></td>
                   <td className="px-4 py-2 text-foreground">{formatMoney(row.contributed)}</td>

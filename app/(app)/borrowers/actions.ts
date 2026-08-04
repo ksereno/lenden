@@ -20,6 +20,18 @@ export async function addBorrower(formData: FormData) {
   revalidatePath("/borrowers");
 }
 
+export async function updateBorrower(borrowerId: string, formData: FormData) {
+  const name = String(formData.get("name") ?? "").trim();
+  const contact_info = String(formData.get("contact_info") ?? "").trim();
+  const notes = String(formData.get("notes") ?? "").trim();
+  if (!name) return;
+
+  const supabase = await createClient();
+  await supabase.from("borrowers").update({ name, contact_info, notes }).eq("id", borrowerId);
+  revalidatePath("/borrowers");
+  redirect("/borrowers");
+}
+
 export async function deleteBorrower(formData: FormData) {
   const borrowerId = String(formData.get("borrower_id") ?? "");
   if (!borrowerId) return;
