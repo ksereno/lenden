@@ -2,7 +2,7 @@ import sharp from "sharp";
 import { readFileSync, copyFileSync } from "fs";
 
 const SRC = "SVG Cats/Japanese Cat Maneki Neko.svg";
-const BG = "#262624";
+const BG = "#FFFFFF";
 
 const targets = [
   { out: "app/apple-icon.png", size: 180 },
@@ -12,15 +12,8 @@ const targets = [
 
 for (const { out, size } of targets) {
   await sharp(readFileSync(SRC))
-    .resize(Math.round(size * 0.86), Math.round(size * 0.86), { fit: "contain", background: BG })
-    .extend({
-      top: Math.round(size * 0.07),
-      bottom: Math.round(size * 0.07),
-      left: Math.round(size * 0.07),
-      right: Math.round(size * 0.07),
-      background: BG,
-    })
-    .resize(size, size)
+    .resize(size, size, { fit: "contain", background: BG })
+    .flatten({ background: BG })
     .png()
     .toFile(out);
   console.log("wrote", out);
