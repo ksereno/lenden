@@ -45,7 +45,7 @@ export default async function ReportsPage() {
 
       <div>
         <h2 className="mb-3 text-sm font-medium text-muted">By friend</h2>
-        <div className="overflow-hidden rounded-lg border border-border">
+        <div className="overflow-x-auto rounded-lg border border-border">
           <table className="w-full text-sm">
             <thead className="bg-surface text-left text-muted">
               <tr>
@@ -74,7 +74,7 @@ export default async function ReportsPage() {
         {loanRows.length === 0 ? (
           <p className="text-sm text-muted">No loans yet.</p>
         ) : (
-          <div className="overflow-hidden rounded-lg border border-border">
+          <div className="overflow-x-auto rounded-lg border border-border">
             <table className="w-full text-sm">
               <thead className="bg-surface text-left text-muted">
                 <tr>

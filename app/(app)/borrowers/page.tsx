@@ -1,9 +1,17 @@
 import { getBorrowers } from "@/lib/queries";
 import { getCurrentProfile } from "@/lib/currentProfile";
-import { addBorrower } from "./actions";
+import { addBorrower, deleteBorrower } from "./actions";
 
-export default async function BorrowersPage() {
-  const [borrowers, profile] = await Promise.all([getBorrowers(), getCurrentProfile()]);
+export default async function BorrowersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; deleted?: string }>;
+}) {
+  const [{ error, deleted }, borrowers, profile] = await Promise.all([
+    searchParams,
+    getBorrowers(),
+    getCurrentProfile(),
+  ]);
   const isOwner = profile?.role === "owner";
 
   return (
@@ -13,16 +21,28 @@ export default async function BorrowersPage() {
         <p className="mt-1 text-sm text-muted">The people loans are made to.</p>
       </div>
 
+      {error === "has-loans" && (
+        <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm text-red-400">
+          Can&apos;t remove that borrower — they still have loans on record. Remove or reassign those first.
+        </p>
+      )}
+      {deleted === "1" && (
+        <p className="rounded-lg border border-border bg-surface px-4 py-2 text-sm text-muted">
+          Borrower removed.
+        </p>
+      )}
+
       {borrowers.length === 0 ? (
         <p className="text-sm text-muted">No borrowers yet.</p>
       ) : (
-        <div className="overflow-hidden rounded-lg border border-border">
+        <div className="overflow-x-auto rounded-lg border border-border">
           <table className="w-full text-sm">
             <thead className="bg-surface text-left text-muted">
               <tr>
                 <th className="px-4 py-2 font-medium">Name</th>
                 <th className="px-4 py-2 font-medium">Contact</th>
                 <th className="px-4 py-2 font-medium">Notes</th>
+                {isOwner && <th className="px-4 py-2 font-medium"></th>}
               </tr>
             </thead>
             <tbody>
@@ -31,6 +51,16 @@ export default async function BorrowersPage() {
                   <td className="px-4 py-2 text-foreground">{b.name}</td>
                   <td className="px-4 py-2 text-muted">{b.contact_info || "—"}</td>
                   <td className="px-4 py-2 text-muted">{b.notes || "—"}</td>
+                  {isOwner && (
+                    <td className="px-4 py-2 text-right">
+                      <form action={deleteBorrower}>
+                        <input type="hidden" name="borrower_id" value={b.id} />
+                        <button type="submit" className="text-muted hover:text-red-400">
+                          Remove
+                        </button>
+                      </form>
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

@@ -67,7 +67,7 @@ create trigger on_auth_user_created
   for each row execute procedure handle_new_user();
 
 -- Role lookup helper, security definer so it isn't blocked by profiles' own RLS.
-create function current_role()
+create function app_role()
 returns text
 language sql
 security definer set search_path = public
@@ -84,31 +84,31 @@ alter table payments enable row level security;
 
 -- profiles: everyone signed in can see the roster (names/colors); only the owner edits roles.
 create policy profiles_select on profiles for select to authenticated using (true);
-create policy profiles_update_owner on profiles for update to authenticated using (current_role() = 'owner');
-create policy profiles_delete_owner on profiles for delete to authenticated using (current_role() = 'owner');
+create policy profiles_update_owner on profiles for update to authenticated using (app_role() = 'owner');
+create policy profiles_delete_owner on profiles for delete to authenticated using (app_role() = 'owner');
 
 -- borrowers: everyone can view; only the owner manages them.
 create policy borrowers_select on borrowers for select to authenticated using (true);
-create policy borrowers_insert_owner on borrowers for insert to authenticated with check (current_role() = 'owner');
-create policy borrowers_update_owner on borrowers for update to authenticated using (current_role() = 'owner');
-create policy borrowers_delete_owner on borrowers for delete to authenticated using (current_role() = 'owner');
+create policy borrowers_insert_owner on borrowers for insert to authenticated with check (app_role() = 'owner');
+create policy borrowers_update_owner on borrowers for update to authenticated using (app_role() = 'owner');
+create policy borrowers_delete_owner on borrowers for delete to authenticated using (app_role() = 'owner');
 
 -- loans: everyone can view; only the owner manages them.
 create policy loans_select on loans for select to authenticated using (true);
-create policy loans_insert_owner on loans for insert to authenticated with check (current_role() = 'owner');
-create policy loans_update_owner on loans for update to authenticated using (current_role() = 'owner');
-create policy loans_delete_owner on loans for delete to authenticated using (current_role() = 'owner');
+create policy loans_insert_owner on loans for insert to authenticated with check (app_role() = 'owner');
+create policy loans_update_owner on loans for update to authenticated using (app_role() = 'owner');
+create policy loans_delete_owner on loans for delete to authenticated using (app_role() = 'owner');
 
 -- loan_contributions: everyone can view; owner and contributors can add, nobody but owner edits/deletes.
 create policy contributions_select on loan_contributions for select to authenticated using (true);
 create policy contributions_insert on loan_contributions for insert to authenticated
-  with check (current_role() in ('owner', 'contributor'));
-create policy contributions_update_owner on loan_contributions for update to authenticated using (current_role() = 'owner');
-create policy contributions_delete_owner on loan_contributions for delete to authenticated using (current_role() = 'owner');
+  with check (app_role() in ('owner', 'contributor'));
+create policy contributions_update_owner on loan_contributions for update to authenticated using (app_role() = 'owner');
+create policy contributions_delete_owner on loan_contributions for delete to authenticated using (app_role() = 'owner');
 
 -- payments: everyone can view; owner and contributors can log payments, nobody but owner edits/deletes.
 create policy payments_select on payments for select to authenticated using (true);
 create policy payments_insert on payments for insert to authenticated
-  with check (current_role() in ('owner', 'contributor'));
-create policy payments_update_owner on payments for update to authenticated using (current_role() = 'owner');
-create policy payments_delete_owner on payments for delete to authenticated using (current_role() = 'owner');
+  with check (app_role() in ('owner', 'contributor'));
+create policy payments_update_owner on payments for update to authenticated using (app_role() = 'owner');
+create policy payments_delete_owner on payments for delete to authenticated using (app_role() = 'owner');

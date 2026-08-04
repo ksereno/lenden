@@ -52,7 +52,7 @@ export default async function LoanDetailPage({ params }: { params: Promise<{ id:
 
       <div>
         <h2 className="mb-3 text-sm font-medium text-muted">Contributions</h2>
-        <div className="overflow-hidden rounded-lg border border-border">
+        <div className="overflow-x-auto rounded-lg border border-border">
           <table className="w-full text-sm">
             <thead className="bg-surface text-left text-muted">
               <tr>
@@ -87,7 +87,7 @@ export default async function LoanDetailPage({ params }: { params: Promise<{ id:
         {payments.length === 0 ? (
           <p className="text-sm text-muted">No payments logged yet.</p>
         ) : (
-          <div className="overflow-hidden rounded-lg border border-border">
+          <div className="overflow-x-auto rounded-lg border border-border">
             <table className="w-full text-sm">
               <thead className="bg-surface text-left text-muted">
                 <tr>

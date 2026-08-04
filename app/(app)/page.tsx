@@ -43,7 +43,7 @@ export default async function DashboardPage() {
         {openLoans.length === 0 ? (
           <p className="text-sm text-muted">No open loans yet.</p>
         ) : (
-          <div className="overflow-hidden rounded-lg border border-border">
+          <div className="overflow-x-auto rounded-lg border border-border">
             <table className="w-full text-sm">
               <thead className="bg-surface text-left text-muted">
                 <tr>
