@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+:root {
+  --background: #262624;
+  --surface: #30302e;
+  --border: #3e3e3a;
+  --foreground: #fafaf7;
+  --muted: #a8a69d;
+  --accent: #d97757;
+  --accent-foreground: #262624;
+
+  --friend-kean: #ffd166;
+  --friend-jess: #a154ff;
+  --friend-katch: #002d90;
+  --friend-marcel: #c5efcb;
+  --friend-efren: #fcb0b3;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-friend-kean: var(--friend-kean);
+  --color-friend-jess: var(--friend-jess);
+  --color-friend-katch: var(--friend-katch);
+  --color-friend-marcel: var(--friend-marcel);
+  --color-friend-efren: var(--friend-efren);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
