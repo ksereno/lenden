@@ -3,6 +3,7 @@ import Image from "next/image";
 import { redirect } from "next/navigation";
 import { getCurrentProfile } from "@/lib/currentProfile";
 import { signOut } from "@/app/actions";
+import { RefreshButton } from "@/components/RefreshButton";
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const profile = await getCurrentProfile();
@@ -32,8 +33,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               aria-hidden
             />
             <span className="truncate text-muted">{profile.full_name || profile.email}</span>
+            <RefreshButton />
             <form action={signOut} className="shrink-0">
-              <button type="submit" className="text-muted hover:text-foreground">
+              <button type="submit" className="text-accent hover:opacity-80">
                 Sign out
               </button>
             </form>
@@ -46,9 +48,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               {link.label}
             </Link>
           ))}
-          {profile.role === "owner" && (
+          {(profile.role === "owner" || profile.role === "contributor") && (
             <Link href="/loans/new" className="text-accent hover:opacity-80">
               + New loan
+            </Link>
+          )}
+          {(profile.receives_admin_fee || profile.role === "owner") && (
+            <Link href="/commissions" className="text-muted hover:text-foreground">
+              Commissions
             </Link>
           )}
         </nav>

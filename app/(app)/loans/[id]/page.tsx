@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLoan, getBorrower, getContributionsForLoan, getPaymentsForLoan, getProfiles } from "@/lib/queries";
 import { getCurrentProfile } from "@/lib/currentProfile";
-import { loanTotals, friendShares } from "@/lib/loanMath";
+import { loanTotals, friendShares, adminFee } from "@/lib/loanMath";
 import { formatMoney, formatPercent, formatDate } from "@/lib/format";
 import { FriendBadge } from "@/components/FriendBadge";
 import { StatusPill } from "@/components/StatusPill";
@@ -29,9 +29,12 @@ export default async function LoanDetailPage({ params }: { params: Promise<{ id:
   const profileById = new Map(profiles.map((p) => [p.id, p]));
 
   const isOwner = currentProfile?.role === "owner";
+  const isContributorOnThisLoan = !!currentProfile && contributions.some((c) => c.friend_id === currentProfile.id);
+  const canEditThisLoan = isOwner || isContributorOnThisLoan;
   const canAddPayment = currentProfile?.role === "owner" || currentProfile?.role === "contributor";
   const today = new Date().toISOString().slice(0, 10);
   const isOverdue = loan.status === "open" && !!loan.due_date && loan.due_date < today;
+  const fee = adminFee(loan);
 
   return (
     <div className="flex flex-col gap-8">
@@ -52,7 +55,7 @@ export default async function LoanDetailPage({ params }: { params: Promise<{ id:
         </div>
         <div className="flex items-center gap-3">
           <StatusPill status={loan.status} />
-          {isOwner && (
+          {canEditThisLoan && (
             <>
               <Link href={`/loans/${loan.id}/edit`} className="text-sm text-muted hover:text-foreground">
                 Edit
@@ -75,6 +78,9 @@ export default async function LoanDetailPage({ params }: { params: Promise<{ id:
         <StatCard label="Repaid so far" value={formatMoney(totals.totalRepaid)} />
         <StatCard label="Balance" value={formatMoney(totals.balance)} />
       </div>
+      <p className="-mt-4 text-xs text-muted">
+        Includes a {formatMoney(fee)} admin fee (10% of interest) credited to Efren — contributor interest shares below already reflect this.
+      </p>
 
       <div>
         <h2 className="mb-3 text-sm font-medium text-muted">Contributions</h2>
@@ -172,7 +178,7 @@ export default async function LoanDetailPage({ params }: { params: Promise<{ id:
         </div>
       )}
 
-      {isOwner && loan.status === "open" && (
+      {canEditThisLoan && loan.status === "open" && (
         <div className="flex gap-3">
           <form action={setLoanStatus.bind(null, loan.id, "repaid")}>
             <button type="submit" className="rounded-lg border border-border px-3 py-1.5 text-sm text-foreground hover:bg-surface">

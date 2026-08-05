@@ -13,6 +13,14 @@ export function computeInterest(loan: Loan): number {
   }
 }
 
+/** Admin fee: a flat cut of the interest only, always credited to the
+ * designated commission recipient regardless of who contributed principal. */
+export const ADMIN_FEE_RATE = 0.1;
+
+export function adminFee(loan: Loan): number {
+  return computeInterest(loan) * ADMIN_FEE_RATE;
+}
+
 export interface LoanTotals {
   totalInterest: number;
   totalOwed: number;
@@ -43,6 +51,7 @@ export function friendShares(
   payments: Payment[],
 ): FriendShare[] {
   const totals = loanTotals(loan, payments);
+  const distributableInterest = totals.totalInterest - adminFee(loan);
 
   return contributions.map((c) => {
     const sharePercent = loan.principal > 0 ? c.amount / loan.principal : 0;
@@ -50,7 +59,7 @@ export function friendShares(
       friendId: c.friend_id,
       contribution: c.amount,
       sharePercent,
-      interestEarned: sharePercent * totals.totalInterest,
+      interestEarned: sharePercent * distributableInterest,
       repaidToDate: sharePercent * totals.totalRepaid,
       outstanding: sharePercent * totals.balance,
     };

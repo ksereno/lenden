@@ -1,18 +1,23 @@
 import { notFound, redirect } from "next/navigation";
-import { getLoan, getBorrower } from "@/lib/queries";
+import { getLoan, getBorrower, getContributionsForLoan } from "@/lib/queries";
 import { getCurrentProfile } from "@/lib/currentProfile";
 import { updateLoan } from "../actions";
 
 export default async function EditLoanPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const profile = await getCurrentProfile();
-  if (profile?.role !== "owner") redirect(`/loans/${id}`);
-
   const loan = await getLoan(id);
   if (!loan) notFound();
 
-  const borrower = await getBorrower(loan.borrower_id);
+  const [profile, contributions, borrower] = await Promise.all([
+    getCurrentProfile(),
+    getContributionsForLoan(loan.id),
+    getBorrower(loan.borrower_id),
+  ]);
+
+  const canEdit =
+    profile?.role === "owner" || (!!profile && contributions.some((c) => c.friend_id === profile.id));
+  if (!canEdit) redirect(`/loans/${id}`);
 
   return (
     <div className="flex max-w-lg flex-col gap-8">

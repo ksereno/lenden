@@ -7,7 +7,7 @@ import { createLoan } from "./actions";
 
 export default async function NewLoanPage() {
   const profile = await getCurrentProfile();
-  if (profile?.role !== "owner") redirect("/");
+  if (profile?.role !== "owner" && profile?.role !== "contributor") redirect("/");
 
   const [borrowers, profiles] = await Promise.all([getBorrowers(), getProfiles()]);
   const today = new Date().toISOString().slice(0, 10);

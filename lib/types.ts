@@ -10,6 +10,7 @@ export interface Profile {
   full_name: string;
   role: Role;
   highlight_color: string;
+  receives_admin_fee: boolean;
   created_at: string;
 }
 
