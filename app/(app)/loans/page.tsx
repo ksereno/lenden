@@ -1,23 +1,31 @@
 import Link from "next/link";
-import { getLoans, getBorrowers, getAllPayments } from "@/lib/queries";
+import { getLoans, getBorrowers, getAllPayments, getAllContributions } from "@/lib/queries";
+import { getCurrentProfile } from "@/lib/currentProfile";
 import { loanTotals } from "@/lib/loanMath";
 import { formatMoney, formatDate } from "@/lib/format";
 import { StatusPill } from "@/components/StatusPill";
 
 export default async function LoansPage() {
-  const [loans, borrowers, allPayments] = await Promise.all([
+  const [loans, borrowers, allPayments, allContributions, currentProfile] = await Promise.all([
     getLoans(),
     getBorrowers(),
     getAllPayments(),
+    getAllContributions(),
+    getCurrentProfile(),
   ]);
 
   const borrowerById = new Map(borrowers.map((b) => [b.id, b]));
   const today = new Date().toISOString().slice(0, 10);
+  const isOwner = currentProfile?.role === "owner";
 
   const rows = loans.map((loan) => {
     const payments = allPayments.filter((p) => p.loan_id === loan.id);
     const isOverdue = loan.status === "open" && !!loan.due_date && loan.due_date < today;
-    return { loan, borrower: borrowerById.get(loan.borrower_id), totals: loanTotals(loan, payments), isOverdue };
+    const canEdit =
+      isOwner ||
+      (!!currentProfile &&
+        allContributions.some((c) => c.loan_id === loan.id && c.friend_id === currentProfile.id));
+    return { loan, borrower: borrowerById.get(loan.borrower_id), totals: loanTotals(loan, payments), isOverdue, canEdit };
   });
 
   return (
@@ -39,10 +47,11 @@ export default async function LoansPage() {
                 <th className="px-4 py-2 font-medium">Balance</th>
                 <th className="px-4 py-2 font-medium">Due</th>
                 <th className="px-4 py-2 font-medium">Status</th>
+                <th className="px-4 py-2 font-medium"></th>
               </tr>
             </thead>
             <tbody>
-              {rows.map(({ loan, borrower, totals, isOverdue }) => (
+              {rows.map(({ loan, borrower, totals, isOverdue, canEdit }) => (
                 <tr key={loan.id} className="border-t border-border">
                   <td className="px-4 py-2">
                     <Link href={`/loans/${loan.id}`} className="text-foreground hover:text-accent">
@@ -57,6 +66,26 @@ export default async function LoansPage() {
                   </td>
                   <td className="px-4 py-2">
                     <StatusPill status={loan.status} />
+                  </td>
+                  <td className="px-4 py-2 text-right">
+                    {canEdit && (
+                      <Link
+                        href={`/loans/${loan.id}/edit`}
+                        aria-label="Edit loan"
+                        title="You can edit this loan"
+                        className="inline-flex items-center gap-1 text-muted hover:text-accent"
+                      >
+                        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                          <path
+                            d="M11.3 1.7a1.5 1.5 0 0 1 2.1 2.1l-7.8 7.8-2.8.7.7-2.8 7.8-7.8Z"
+                            stroke="currentColor"
+                            strokeWidth="1.3"
+                            strokeLinejoin="round"
+                          />
+                        </svg>
+                        Edit
+                      </Link>
+                    )}
                   </td>
                 </tr>
               ))}
