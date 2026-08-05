@@ -18,7 +18,7 @@ export default async function CommissionsPage() {
 
   const borrowerById = new Map(borrowers.map((b) => [b.id, b]));
 
-  const rows = loans.map((loan) => {
+  const rows = loans.filter((loan) => loan.status !== "cancelled").map((loan) => {
     const payments = allPayments.filter((p) => p.loan_id === loan.id);
     const totals = loanTotals(loan, payments);
     const fee = adminFee(loan);

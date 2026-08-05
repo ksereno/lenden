@@ -27,12 +27,14 @@ export default async function ReportsPage() {
     const payments = allPayments.filter((p) => p.loan_id === loan.id);
     const shares = friendShares(loan, contributions, payments);
 
-    for (const s of shares) {
-      const agg = byFriend.get(s.friendId);
-      if (!agg) continue;
-      agg.contributed += s.contribution;
-      agg.interestEarned += s.interestEarned;
-      agg.outstanding += Math.max(s.outstanding, 0);
+    if (loan.status !== "cancelled") {
+      for (const s of shares) {
+        const agg = byFriend.get(s.friendId);
+        if (!agg) continue;
+        agg.contributed += s.contribution;
+        agg.interestEarned += s.interestEarned;
+        agg.outstanding += Math.max(s.outstanding, 0);
+      }
     }
 
     return { loan, borrower: borrowerById.get(loan.borrower_id), totals: loanTotals(loan, payments) };

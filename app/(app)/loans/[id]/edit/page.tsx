@@ -1,7 +1,8 @@
 import { notFound, redirect } from "next/navigation";
 import { getLoan, getBorrower, getContributionsForLoan } from "@/lib/queries";
 import { getCurrentProfile } from "@/lib/currentProfile";
-import { updateLoan } from "../actions";
+import { ConfirmDeleteButton } from "@/components/ConfirmDeleteButton";
+import { updateLoan, deleteLoan, setLoanStatus } from "../actions";
 
 export default async function EditLoanPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -84,6 +85,7 @@ export default async function EditLoanPage({ params }: { params: Promise<{ id: s
             <option value="open">Open</option>
             <option value="repaid">Repaid</option>
             <option value="defaulted">Defaulted</option>
+            <option value="cancelled">Cancelled</option>
           </select>
         </label>
 
@@ -94,6 +96,25 @@ export default async function EditLoanPage({ params }: { params: Promise<{ id: s
           Save changes
         </button>
       </form>
+
+      <div className="flex gap-3 border-t border-border pt-6">
+        {loan.status !== "cancelled" && (
+          <ConfirmDeleteButton
+            action={setLoanStatus.bind(null, loan.id, "cancelled")}
+            confirmMessage="Cancel this loan? It stays on record marked as cancelled, and is left out of interest/commission totals, but nothing is deleted."
+            className="rounded-lg border border-border px-3 py-1.5 text-sm text-foreground hover:bg-surface"
+          >
+            Cancel loan
+          </ConfirmDeleteButton>
+        )}
+        <ConfirmDeleteButton
+          action={deleteLoan.bind(null, loan.id)}
+          confirmMessage="Delete this loan permanently? This also removes its contributions and payment history — this cannot be undone."
+          className="rounded-lg border border-red-500/30 px-3 py-1.5 text-sm text-red-400 hover:bg-red-500/10"
+        >
+          Delete loan
+        </ConfirmDeleteButton>
+      </div>
     </div>
   );
 }

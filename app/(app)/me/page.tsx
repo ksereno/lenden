@@ -30,9 +30,10 @@ export default async function MePage() {
     })
     .filter((r): r is NonNullable<typeof r> => r !== null);
 
-  const totalContributed = rows.reduce((sum, r) => sum + r.share.contribution, 0);
-  const totalInterestEarned = rows.reduce((sum, r) => sum + r.share.interestEarned, 0);
-  const totalOutstanding = rows.reduce((sum, r) => sum + Math.max(r.share.outstanding, 0), 0);
+  const activeRows = rows.filter((r) => r.loan.status !== "cancelled");
+  const totalContributed = activeRows.reduce((sum, r) => sum + r.share.contribution, 0);
+  const totalInterestEarned = activeRows.reduce((sum, r) => sum + r.share.interestEarned, 0);
+  const totalOutstanding = activeRows.reduce((sum, r) => sum + Math.max(r.share.outstanding, 0), 0);
 
   return (
     <div className="flex flex-col gap-8">

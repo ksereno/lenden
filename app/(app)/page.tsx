@@ -19,9 +19,10 @@ export default async function DashboardPage() {
     return { loan, borrower: borrowerById.get(loan.borrower_id), totals: loanTotals(loan, payments) };
   });
 
-  const totalLent = rows.reduce((sum, r) => sum + r.loan.principal, 0);
-  const totalInterest = rows.reduce((sum, r) => sum + r.totals.totalInterest, 0);
-  const totalOutstanding = rows.reduce((sum, r) => sum + Math.max(r.totals.balance, 0), 0);
+  const activeRows = rows.filter((r) => r.loan.status !== "cancelled");
+  const totalLent = activeRows.reduce((sum, r) => sum + r.loan.principal, 0);
+  const totalInterest = activeRows.reduce((sum, r) => sum + r.totals.totalInterest, 0);
+  const totalOutstanding = activeRows.reduce((sum, r) => sum + Math.max(r.totals.balance, 0), 0);
 
   const openLoans = rows.filter((r) => r.loan.status === "open");
 

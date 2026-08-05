@@ -4,6 +4,7 @@ const styles: Record<LoanStatus, string> = {
   open: "bg-accent/15 text-accent",
   repaid: "bg-green-500/15 text-green-400",
   defaulted: "bg-red-500/15 text-red-400",
+  cancelled: "bg-muted/15 text-muted",
 };
 
 export function StatusPill({ status }: { status: LoanStatus }) {

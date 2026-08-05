@@ -2,7 +2,7 @@ export type Role = "owner" | "contributor" | "viewer";
 
 export type InterestType = "flat";
 
-export type LoanStatus = "open" | "repaid" | "defaulted";
+export type LoanStatus = "open" | "repaid" | "defaulted" | "cancelled";
 
 export interface Profile {
   id: string;
