@@ -17,7 +17,9 @@ export default async function EditLoanPage({ params }: { params: Promise<{ id: s
   ]);
 
   const canEdit =
-    profile?.role === "owner" || (!!profile && contributions.some((c) => c.friend_id === profile.id));
+    profile?.role === "owner" ||
+    (loan.funding_source === "pool" && profile?.role === "contributor") ||
+    (!!profile && contributions.some((c) => c.friend_id === profile.id));
   if (!canEdit) redirect(`/loans/${id}`);
 
   return (

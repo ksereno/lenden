@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Borrower, Loan, LoanContribution, Payment, Profile } from "@/lib/types";
+import type { Borrower, Loan, LoanContribution, Payment, PoolDeposit, Profile } from "@/lib/types";
 
 export async function getProfiles(): Promise<Profile[]> {
   const supabase = await createClient();
@@ -60,5 +60,22 @@ export async function getAllContributions(): Promise<LoanContribution[]> {
 export async function getAllPayments(): Promise<Payment[]> {
   const supabase = await createClient();
   const { data } = await supabase.from("payments").select("*");
+  return data ?? [];
+}
+
+export async function getPoolDeposits(): Promise<PoolDeposit[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("pool_deposits").select("*").order("date", { ascending: false });
+  return data ?? [];
+}
+
+/** Owner + contributor profiles -- the fixed set of five who share pool-loan interest equally. */
+export async function getCoreFriends(): Promise<Profile[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("profiles")
+    .select("*")
+    .in("role", ["owner", "contributor"])
+    .order("full_name");
   return data ?? [];
 }

@@ -23,6 +23,7 @@ export default async function LoansPage() {
     const isOverdue = loan.status === "open" && !!loan.due_date && loan.due_date < today;
     const canEdit =
       isOwner ||
+      (loan.funding_source === "pool" && currentProfile?.role === "contributor") ||
       (!!currentProfile &&
         allContributions.some((c) => c.loan_id === loan.id && c.friend_id === currentProfile.id));
     return { loan, borrower: borrowerById.get(loan.borrower_id), totals: loanTotals(loan, payments), isOverdue, canEdit };

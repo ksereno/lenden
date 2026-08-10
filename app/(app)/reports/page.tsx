@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getLoans, getBorrowers, getProfiles, getAllContributions, getAllPayments } from "@/lib/queries";
+import { getLoans, getBorrowers, getProfiles, getAllContributions, getAllPayments, getCoreFriends } from "@/lib/queries";
 import { loanTotals, friendShares } from "@/lib/loanMath";
 import { formatMoney } from "@/lib/format";
 import { FriendBadge } from "@/components/FriendBadge";
@@ -8,12 +8,13 @@ import { StatCard } from "@/components/StatCard";
 import { ShareBars } from "@/components/ShareBars";
 
 export default async function ReportsPage() {
-  const [loans, borrowers, profiles, allContributions, allPayments] = await Promise.all([
+  const [loans, borrowers, profiles, allContributions, allPayments, coreFriends] = await Promise.all([
     getLoans(),
     getBorrowers(),
     getProfiles(),
     getAllContributions(),
     getAllPayments(),
+    getCoreFriends(),
   ]);
 
   const borrowerById = new Map(borrowers.map((b) => [b.id, b]));
@@ -25,7 +26,7 @@ export default async function ReportsPage() {
   const loanRows = loans.map((loan) => {
     const contributions = allContributions.filter((c) => c.loan_id === loan.id);
     const payments = allPayments.filter((p) => p.loan_id === loan.id);
-    const shares = friendShares(loan, contributions, payments);
+    const shares = friendShares(loan, contributions, payments, coreFriends);
 
     if (loan.status !== "cancelled") {
       for (const s of shares) {

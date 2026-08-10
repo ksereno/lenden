@@ -4,6 +4,8 @@ export type InterestType = "flat";
 
 export type LoanStatus = "open" | "repaid" | "defaulted" | "cancelled";
 
+export type FundingSource = "individual" | "pool";
+
 export interface Profile {
   id: string;
   email: string;
@@ -33,6 +35,7 @@ export interface Loan {
   due_date: string | null;
   term_description: string;
   status: LoanStatus;
+  funding_source: FundingSource;
   created_by: string;
   created_at: string;
 }
@@ -42,6 +45,16 @@ export interface LoanContribution {
   loan_id: string;
   friend_id: string;
   amount: number;
+  created_at: string;
+}
+
+export interface PoolDeposit {
+  id: string;
+  friend_id: string;
+  amount: number;
+  date: string;
+  note: string;
+  created_by: string;
   created_at: string;
 }
 

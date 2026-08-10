@@ -38,6 +38,7 @@ export async function createLoan(formData: FormData) {
       due_date,
       term_description,
       status: "open",
+      funding_source: "individual",
       created_by: user.id,
     })
     .select()

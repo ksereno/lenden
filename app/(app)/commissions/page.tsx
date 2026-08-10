@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getLoans, getBorrowers, getAllPayments } from "@/lib/queries";
 import { getCurrentProfile } from "@/lib/currentProfile";
 import { loanTotals, adminFee } from "@/lib/loanMath";
-import { formatMoney, formatDate } from "@/lib/format";
+import { formatMoney } from "@/lib/format";
 import { StatCard } from "@/components/StatCard";
 
 export default async function CommissionsPage() {

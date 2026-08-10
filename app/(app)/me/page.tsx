@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getLoans, getBorrowers, getAllContributions, getAllPayments } from "@/lib/queries";
+import { getLoans, getBorrowers, getAllContributions, getAllPayments, getCoreFriends } from "@/lib/queries";
 import { getCurrentProfile } from "@/lib/currentProfile";
 import { loanTotals, friendShares } from "@/lib/loanMath";
 import { formatMoney, formatPercent } from "@/lib/format";
@@ -11,11 +11,12 @@ export default async function MePage() {
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
 
-  const [loans, borrowers, allContributions, allPayments] = await Promise.all([
+  const [loans, borrowers, allContributions, allPayments, coreFriends] = await Promise.all([
     getLoans(),
     getBorrowers(),
     getAllContributions(),
     getAllPayments(),
+    getCoreFriends(),
   ]);
 
   const borrowerById = new Map(borrowers.map((b) => [b.id, b]));
@@ -24,7 +25,9 @@ export default async function MePage() {
     .map((loan) => {
       const contributions = allContributions.filter((c) => c.loan_id === loan.id);
       const payments = allPayments.filter((p) => p.loan_id === loan.id);
-      const mine = friendShares(loan, contributions, payments).find((s) => s.friendId === profile.id);
+      const mine = friendShares(loan, contributions, payments, coreFriends).find(
+        (s) => s.friendId === profile.id,
+      );
       if (!mine) return null;
       return { loan, borrower: borrowerById.get(loan.borrower_id), share: mine, totals: loanTotals(loan, payments) };
     })
@@ -49,13 +52,14 @@ export default async function MePage() {
       </div>
 
       {rows.length === 0 ? (
-        <p className="text-sm text-muted">You haven&apos;t contributed to any loans yet.</p>
+        <p className="text-sm text-muted">No loans to show yet.</p>
       ) : (
         <div className="overflow-x-auto rounded-lg border border-border">
           <table className="w-full text-sm">
             <thead className="bg-surface text-left text-muted">
               <tr>
                 <th className="px-4 py-2 font-medium">Borrower</th>
+                <th className="px-4 py-2 font-medium">Funding</th>
                 <th className="px-4 py-2 font-medium">Your contribution</th>
                 <th className="px-4 py-2 font-medium">Your share</th>
                 <th className="px-4 py-2 font-medium">Interest earned</th>
@@ -70,6 +74,9 @@ export default async function MePage() {
                     <Link href={`/loans/${loan.id}`} className="text-foreground hover:text-accent">
                       {borrower?.name ?? "Unknown"}
                     </Link>
+                  </td>
+                  <td className="px-4 py-2 text-muted">
+                    {loan.funding_source === "pool" ? "Pool" : "Individual"}
                   </td>
                   <td className="px-4 py-2 text-foreground">{formatMoney(share.contribution)}</td>
                   <td className="px-4 py-2 text-muted">{formatPercent(share.sharePercent)}</td>
