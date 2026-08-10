@@ -56,7 +56,9 @@ export async function createPoolLoan(formData: FormData) {
     .select()
     .single();
 
-  if (error || !loan) return;
+  if (error || !loan) {
+    redirect(`/loans/new/pool?error=create-failed&message=${encodeURIComponent(error?.message ?? "unknown error")}`);
+  }
 
   redirect(`/loans/${loan.id}`);
 }

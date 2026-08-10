@@ -10,12 +10,12 @@ import { createPoolLoan } from "./actions";
 export default async function NewPoolLoanPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; needed?: string; available?: string }>;
+  searchParams: Promise<{ error?: string; needed?: string; available?: string; message?: string }>;
 }) {
   const profile = await getCurrentProfile();
   if (profile?.role !== "owner" && profile?.role !== "contributor") redirect("/");
 
-  const { error, needed, available: availableParam } = await searchParams;
+  const { error, needed, available: availableParam, message } = await searchParams;
 
   const [borrowers, loans, allPayments, deposits] = await Promise.all([
     getBorrowers(),
@@ -52,6 +52,11 @@ export default async function NewPoolLoanPage({
           That&apos;s more than the pool has available — you asked for {formatMoney(Number(needed ?? 0))} but
           only {formatMoney(Number(availableParam ?? 0))} is available. Lower the amount, or fund this loan
           from specific friends instead.
+        </p>
+      )}
+      {error === "create-failed" && (
+        <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm text-red-400">
+          Couldn&apos;t create the loan: {message || "unknown error"}
         </p>
       )}
 
