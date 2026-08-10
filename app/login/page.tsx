@@ -62,9 +62,9 @@ export default function LoginPage() {
           loop
           muted
           playsInline
-          width={64}
-          height={64}
-          className="mx-auto mb-4 h-16 w-16 rounded-xl"
+          width={192}
+          height={192}
+          className="mx-auto mb-4 h-48 w-48 rounded-xl"
         />
         <h1 className="mb-1 text-center text-2xl font-semibold text-foreground">Lenden</h1>
         <p className="mb-8 text-center text-sm text-muted">Sign in with the username and password Kean gave you.</p>
