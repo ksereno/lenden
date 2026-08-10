@@ -11,18 +11,20 @@ import { loanTotals, poolSummary, friendShares, adminFee } from "@/lib/loanMath"
 import { formatMoney } from "@/lib/format";
 import { StatCard } from "@/components/StatCard";
 import { StatusPill } from "@/components/StatusPill";
-import { FriendBadge } from "@/components/FriendBadge";
+import { getCurrentProfile } from "@/lib/currentProfile";
 import type { LoanContribution, Payment } from "@/lib/types";
 
 export default async function DashboardPage() {
-  const [loans, borrowers, allPayments, allContributions, deposits, coreFriends] = await Promise.all([
-    getLoans(),
-    getBorrowers(),
-    getAllPayments(),
-    getAllContributions(),
-    getPoolDeposits(),
-    getCoreFriends(),
-  ]);
+  const [loans, borrowers, allPayments, allContributions, deposits, coreFriends, currentProfile] =
+    await Promise.all([
+      getLoans(),
+      getBorrowers(),
+      getAllPayments(),
+      getAllContributions(),
+      getPoolDeposits(),
+      getCoreFriends(),
+      getCurrentProfile(),
+    ]);
 
   const borrowerById = new Map(borrowers.map((b) => [b.id, b]));
 
@@ -98,31 +100,34 @@ export default async function DashboardPage() {
       </div>
 
       <div>
-        <h2 className="mb-1 text-sm font-medium text-muted">Earnings</h2>
+        <h2 className="mb-1 text-sm font-medium text-muted">
+          Earnings — <Link href="/reports" className="text-accent hover:opacity-80">view everyone</Link>
+        </h2>
         <p className="mb-3 text-xs text-muted">
           Total combined doesn&apos;t include Efren&apos;s admin fee.
         </p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <StatCard label="Total combined earnings" value={formatMoney(totalCombinedEarnings)} />
-        </div>
-
-        <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {coreFriends.map((f) => {
-            const interest = earningsByFriend.get(f.id) ?? 0;
-            const isAdminFeeRecipient = f.receives_admin_fee;
-            const total = isAdminFeeRecipient ? interest + totalAdminFee : interest;
-            return (
-              <div key={f.id} className="rounded-lg border border-border bg-surface p-4">
-                <FriendBadge profile={f} />
-                <div className="mt-1 text-xl font-semibold text-foreground">{formatMoney(total)}</div>
-                {isAdminFeeRecipient && (
-                  <div className="mt-1 text-xs text-muted">
-                    {formatMoney(interest)} interest + {formatMoney(totalAdminFee)} admin fee
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          {currentProfile && (
+            <div className="rounded-lg border border-border bg-surface p-4">
+              <div className="text-xs text-muted">Your earnings</div>
+              {(() => {
+                const interest = earningsByFriend.get(currentProfile.id) ?? 0;
+                const isAdminFeeRecipient = currentProfile.receives_admin_fee;
+                const total = isAdminFeeRecipient ? interest + totalAdminFee : interest;
+                return (
+                  <>
+                    <div className="mt-1 text-xl font-semibold text-foreground">{formatMoney(total)}</div>
+                    {isAdminFeeRecipient && (
+                      <div className="mt-1 text-xs text-muted">
+                        {formatMoney(interest)} interest + {formatMoney(totalAdminFee)} admin fee
+                      </div>
+                    )}
+                  </>
+                );
+              })()}
+            </div>
+          )}
         </div>
       </div>
 
