@@ -14,6 +14,7 @@ export default async function BorrowersPage({
     getCurrentProfile(),
   ]);
   const isOwner = profile?.role === "owner";
+  const canAdd = isOwner || profile?.role === "contributor";
 
   return (
     <div className="flex flex-col gap-8">
@@ -72,7 +73,7 @@ export default async function BorrowersPage({
         </div>
       )}
 
-      {isOwner && (
+      {canAdd && (
         <div className="max-w-md">
           <h2 className="mb-3 text-sm font-medium text-muted">Add a borrower</h2>
           <form action={addBorrower} className="flex flex-col gap-3">
