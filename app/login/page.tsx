@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { createClient } from "@/lib/supabase/client";
 import { usernameToEmail } from "@/lib/auth";
+import { LoadingVideo } from "@/components/LoadingVideo";
+
+type Stage = "form" | "playing" | "fading";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,6 +14,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "error">("idle");
   const [error, setError] = useState("");
+  const [stage, setStage] = useState<Stage>("form");
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -27,16 +30,42 @@ export default function LoginPage() {
     if (error) {
       setError("Wrong username or password.");
       setStatus("error");
-    } else {
+      return;
+    }
+
+    setStage("playing");
+    setTimeout(() => setStage("fading"), 2000);
+    setTimeout(() => {
       router.push("/");
       router.refresh();
-    }
+    }, 2300);
+  }
+
+  if (stage !== "form") {
+    return (
+      <main
+        className={`flex flex-1 items-center justify-center transition-opacity duration-300 ${
+          stage === "fading" ? "opacity-0" : "opacity-100"
+        }`}
+      >
+        <LoadingVideo />
+      </main>
+    );
   }
 
   return (
     <main className="flex flex-1 items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <Image src="/icon.svg" alt="" width={64} height={64} className="mx-auto mb-4 rounded-xl" />
+        <video
+          src="/cat-loop.mp4"
+          autoPlay
+          loop
+          muted
+          playsInline
+          width={64}
+          height={64}
+          className="mx-auto mb-4 h-16 w-16 rounded-xl"
+        />
         <h1 className="mb-1 text-center text-2xl font-semibold text-foreground">Lenden</h1>
         <p className="mb-8 text-center text-sm text-muted">Sign in with the username and password Kean gave you.</p>
 
