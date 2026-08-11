@@ -16,8 +16,16 @@ export async function addBorrower(formData: FormData) {
   } = await supabase.auth.getUser();
   if (!user) return;
 
-  await supabase.from("borrowers").insert({ name, contact_info, notes, created_by: user.id });
+  const { error } = await supabase
+    .from("borrowers")
+    .insert({ name, contact_info, notes, created_by: user.id });
+
+  if (error) {
+    redirect(`/borrowers?error=create-failed&message=${encodeURIComponent(error.message)}`);
+  }
+
   revalidatePath("/borrowers");
+  redirect("/borrowers");
 }
 
 export async function updateBorrower(borrowerId: string, formData: FormData) {

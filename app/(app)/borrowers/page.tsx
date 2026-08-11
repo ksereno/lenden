@@ -6,9 +6,9 @@ import { addBorrower, deleteBorrower } from "./actions";
 export default async function BorrowersPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; deleted?: string }>;
+  searchParams: Promise<{ error?: string; deleted?: string; message?: string }>;
 }) {
-  const [{ error, deleted }, borrowers, profile] = await Promise.all([
+  const [{ error, deleted, message }, borrowers, profile] = await Promise.all([
     searchParams,
     getBorrowers(),
     getCurrentProfile(),
@@ -31,6 +31,11 @@ export default async function BorrowersPage({
       {deleted === "1" && (
         <p className="rounded-lg border border-border bg-surface px-4 py-2 text-sm text-muted">
           Borrower removed.
+        </p>
+      )}
+      {error === "create-failed" && (
+        <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm text-red-400">
+          Couldn&apos;t add borrower: {message || "unknown error"}
         </p>
       )}
 
