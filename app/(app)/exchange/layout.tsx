@@ -20,9 +20,14 @@ export default async function ExchangeLayout({ children }: { children: React.Rea
           </Link>
         ))}
         {(profile?.role === "owner" || profile?.role === "contributor") && (
-          <Link href="/exchange/transactions/new" className="text-accent hover:opacity-80">
-            + New transaction
-          </Link>
+          <>
+            <Link href="/exchange/transactions/new" className="text-accent hover:opacity-80">
+              + New transaction
+            </Link>
+            <Link href="/exchange/pool/add-funds" className="text-accent hover:opacity-80">
+              + Add funds
+            </Link>
+          </>
         )}
       </nav>
 

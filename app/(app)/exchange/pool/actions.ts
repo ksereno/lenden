@@ -6,13 +6,14 @@ import { createClient } from "@/lib/supabase/server";
 import type { BalanceType, PoolTransferDirection } from "@/lib/types";
 
 export async function addCapitalDeposit(formData: FormData) {
+  const friend_id = String(formData.get("friend_id") ?? "");
   const amount = Number(formData.get("amount") ?? 0);
   const balance_type = String(formData.get("balance_type") ?? "") as BalanceType;
   const date = String(formData.get("date") ?? "");
   const note = String(formData.get("note") ?? "").trim();
 
-  if (amount <= 0 || !date || (balance_type !== "physical" && balance_type !== "digital")) {
-    redirect(`/exchange/pool?error=deposit-invalid&message=${encodeURIComponent("Enter a valid amount, balance type, and date.")}`);
+  if (!friend_id || amount <= 0 || !date || (balance_type !== "physical" && balance_type !== "digital")) {
+    redirect(`/exchange/pool/add-funds?error=invalid&message=${encodeURIComponent("Pick a friend and enter a valid amount, balance type, and date.")}`);
   }
 
   const supabase = await createClient();
@@ -23,10 +24,10 @@ export async function addCapitalDeposit(formData: FormData) {
 
   const { error } = await supabase
     .from("exchange_capital_deposits")
-    .insert({ friend_id: user.id, balance_type, amount, date, note, created_by: user.id });
+    .insert({ friend_id, balance_type, amount, date, note, created_by: user.id });
 
   if (error) {
-    redirect(`/exchange/pool?error=deposit-failed&message=${encodeURIComponent(error.message)}`);
+    redirect(`/exchange/pool/add-funds?error=create-failed&message=${encodeURIComponent(error.message)}`);
   }
 
   revalidatePath("/exchange/pool");

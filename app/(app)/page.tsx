@@ -40,10 +40,10 @@ export default async function HubPage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Link
           href="/lenden"
-          className="flex flex-col gap-4 rounded-lg border border-border bg-surface p-6 transition-colors hover:border-accent"
+          className="flex flex-col gap-4 rounded-lg border-2 border-accent bg-surface p-6 transition-opacity hover:opacity-90"
         >
           <div>
-            <h2 className="text-lg font-semibold text-foreground">Lenden</h2>
+            <h2 className="text-lg font-semibold text-accent">Lenden</h2>
             <p className="mt-1 text-sm text-muted">Lending &amp; interest tracker.</p>
           </div>
           <div className="flex gap-6 text-sm">
@@ -60,10 +60,10 @@ export default async function HubPage() {
 
         <Link
           href="/exchange"
-          className="exchange-theme flex flex-col gap-4 rounded-lg border border-border bg-surface p-6 transition-colors hover:border-accent"
+          className="exchange-theme flex flex-col gap-4 rounded-lg border-2 border-accent bg-surface p-6 transition-opacity hover:opacity-90"
         >
           <div>
-            <h2 className="text-lg font-semibold text-foreground">LendenX</h2>
+            <h2 className="text-lg font-semibold text-accent">LendenX</h2>
             <p className="mt-1 text-sm text-muted">Cash in / cash out exchange.</p>
           </div>
           <div className="flex gap-6 text-sm">

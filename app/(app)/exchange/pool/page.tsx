@@ -11,7 +11,7 @@ import { formatMoney, formatDate } from "@/lib/format";
 import { StatCard } from "@/components/StatCard";
 import { ExchangeStatusPill } from "@/components/ExchangeStatusPill";
 import { FriendBadge } from "@/components/FriendBadge";
-import { addCapitalDeposit, createTransfer } from "./actions";
+import { createTransfer } from "./actions";
 
 const DIRECTION_LABELS: Record<string, string> = {
   lending_to_exchange_physical: "Lenden pool → LendenX physical",
@@ -98,7 +98,15 @@ export default async function ExchangePoolPage({
       </div>
 
       <div>
-        <h2 className="mb-3 text-sm font-medium text-muted">Capital deposit history</h2>
+        <h2 className="mb-3 text-sm font-medium text-muted">
+          Capital deposit history
+          {canAct && (
+            <>
+              {" "}
+              — <Link href="/exchange/pool/add-funds" className="text-accent hover:opacity-80">add funds</Link>
+            </>
+          )}
+        </h2>
         {capitalDeposits.length === 0 ? (
           <p className="text-sm text-muted">No deposits logged yet.</p>
         ) : (
@@ -163,92 +171,48 @@ export default async function ExchangePoolPage({
       </div>
 
       {canAct && (
-        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2">
-          <div className="max-w-sm">
-            <h2 className="mb-3 text-sm font-medium text-muted">Log a capital deposit</h2>
-            <form action={addCapitalDeposit} className="flex flex-col gap-3">
-              <select
-                name="balance_type"
-                required
-                className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
-              >
-                <option value="physical">Physical</option>
-                <option value="digital">Digital</option>
-              </select>
-              <input
-                type="number"
-                name="amount"
-                step="0.01"
-                min="0.01"
-                required
-                placeholder="Amount"
-                className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
-              />
-              <input
-                type="date"
-                name="date"
-                required
-                defaultValue={today}
-                className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
-              />
-              <input
-                type="text"
-                name="note"
-                placeholder="Note (optional)"
-                className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="self-start rounded-lg bg-accent px-3 py-2 text-sm font-medium text-accent-foreground"
-              >
-                Log deposit
-              </button>
-            </form>
-          </div>
-
-          <div className="max-w-sm">
-            <h2 className="mb-3 text-sm font-medium text-muted">Transfer capital</h2>
-            <form action={createTransfer} className="flex flex-col gap-3">
-              <select
-                name="direction"
-                required
-                className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
-              >
-                <option value="lending_to_exchange_physical">Lenden pool → LendenX physical</option>
-                <option value="lending_to_exchange_digital">Lenden pool → LendenX digital</option>
-                <option value="exchange_physical_to_lending">LendenX physical → Lenden pool</option>
-                <option value="exchange_digital_to_lending">LendenX digital → Lenden pool</option>
-              </select>
-              <input
-                type="number"
-                name="amount"
-                step="0.01"
-                min="0.01"
-                required
-                placeholder="Amount"
-                className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
-              />
-              <input
-                type="date"
-                name="date"
-                required
-                defaultValue={today}
-                className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
-              />
-              <input
-                type="text"
-                name="note"
-                placeholder="Note (optional)"
-                className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="self-start rounded-lg bg-accent px-3 py-2 text-sm font-medium text-accent-foreground"
-              >
-                Log transfer
-              </button>
-            </form>
-          </div>
+        <div className="max-w-sm">
+          <h2 className="mb-3 text-sm font-medium text-muted">Transfer capital</h2>
+          <form action={createTransfer} className="flex flex-col gap-3">
+            <select
+              name="direction"
+              required
+              className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
+            >
+              <option value="lending_to_exchange_physical">Lenden pool → LendenX physical</option>
+              <option value="lending_to_exchange_digital">Lenden pool → LendenX digital</option>
+              <option value="exchange_physical_to_lending">LendenX physical → Lenden pool</option>
+              <option value="exchange_digital_to_lending">LendenX digital → Lenden pool</option>
+            </select>
+            <input
+              type="number"
+              name="amount"
+              step="0.01"
+              min="0.01"
+              required
+              placeholder="Amount"
+              className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+            />
+            <input
+              type="date"
+              name="date"
+              required
+              defaultValue={today}
+              className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
+            />
+            <input
+              type="text"
+              name="note"
+              placeholder="Note (optional)"
+              className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
+            />
+            <button
+              type="submit"
+              className="self-start rounded-lg bg-accent px-3 py-2 text-sm font-medium text-accent-foreground"
+            >
+              Log transfer
+            </button>
+          </form>
         </div>
       )}
     </div>
