@@ -40,7 +40,7 @@ export default async function HubPage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <Link
           href="/lenden"
-          className="flex flex-col gap-4 rounded-lg border-2 border-accent bg-surface p-6 transition-opacity hover:opacity-90"
+          className="flex flex-col gap-4 rounded-lg border border-border bg-accent/15 p-6 transition-colors hover:border-accent"
         >
           <div>
             <h2 className="text-lg font-semibold text-accent">Lenden</h2>
@@ -60,7 +60,7 @@ export default async function HubPage() {
 
         <Link
           href="/exchange"
-          className="exchange-theme flex flex-col gap-4 rounded-lg border-2 border-accent bg-surface p-6 transition-opacity hover:opacity-90"
+          className="exchange-theme flex flex-col gap-4 rounded-lg border border-border bg-accent/15 p-6 transition-colors hover:border-accent"
         >
           <div>
             <h2 className="text-lg font-semibold text-accent">LendenX</h2>
