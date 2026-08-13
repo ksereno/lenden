@@ -43,17 +43,17 @@ export default async function HubPage() {
           className="flex flex-col gap-4 rounded-lg border border-border bg-accent p-6 transition-opacity hover:opacity-90"
         >
           <div>
-            <h2 className="text-lg font-semibold text-accent-foreground">Lenden</h2>
-            <p className="mt-1 text-sm text-accent-foreground/70">Lending &amp; interest tracker.</p>
+            <h2 className="text-lg font-semibold text-foreground">Lenden</h2>
+            <p className="mt-1 text-sm text-foreground/70">Lending &amp; interest tracker.</p>
           </div>
           <div className="flex gap-6 text-sm">
             <div>
-              <div className="text-xs text-accent-foreground/70">Outstanding</div>
-              <div className="mt-0.5 font-medium text-accent-foreground">{formatMoney(totalOutstanding)}</div>
+              <div className="text-xs text-foreground/70">Outstanding</div>
+              <div className="mt-0.5 font-medium text-foreground">{formatMoney(totalOutstanding)}</div>
             </div>
             <div>
-              <div className="text-xs text-accent-foreground/70">Open loans</div>
-              <div className="mt-0.5 font-medium text-accent-foreground">{openLoans.length}</div>
+              <div className="text-xs text-foreground/70">Open loans</div>
+              <div className="mt-0.5 font-medium text-foreground">{openLoans.length}</div>
             </div>
           </div>
         </Link>
@@ -63,17 +63,17 @@ export default async function HubPage() {
           className="exchange-theme flex flex-col gap-4 rounded-lg border border-border bg-accent p-6 transition-opacity hover:opacity-90"
         >
           <div>
-            <h2 className="text-lg font-semibold text-accent-foreground">LendenX</h2>
-            <p className="mt-1 text-sm text-accent-foreground/70">Cash in / cash out exchange.</p>
+            <h2 className="text-lg font-semibold text-foreground">LendenX</h2>
+            <p className="mt-1 text-sm text-foreground/70">Cash in / cash out exchange.</p>
           </div>
           <div className="flex gap-6 text-sm">
             <div>
-              <div className="text-xs text-accent-foreground/70">Physical</div>
-              <div className="mt-0.5 font-medium text-accent-foreground">{formatMoney(physicalBalance)}</div>
+              <div className="text-xs text-foreground/70">Physical</div>
+              <div className="mt-0.5 font-medium text-foreground">{formatMoney(physicalBalance)}</div>
             </div>
             <div>
-              <div className="text-xs text-accent-foreground/70">Digital</div>
-              <div className="mt-0.5 font-medium text-accent-foreground">{formatMoney(digitalBalance)}</div>
+              <div className="text-xs text-foreground/70">Digital</div>
+              <div className="mt-0.5 font-medium text-foreground">{formatMoney(digitalBalance)}</div>
             </div>
           </div>
         </Link>
