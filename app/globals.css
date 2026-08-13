@@ -40,6 +40,12 @@ body {
   color: var(--foreground);
 }
 
+/* LendenX section gets its own accent to visually separate it from Lenden. */
+.exchange-theme {
+  --accent: #39a0ed;
+  --accent-foreground: #1c2733;
+}
+
 /* iOS Safari auto-zooms on focusing any input under 16px; this stays 16px
    on small screens only so the smaller text-sm styling is untouched elsewhere. */
 @media (max-width: 640px) {

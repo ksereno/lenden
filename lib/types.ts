@@ -13,6 +13,7 @@ export interface Profile {
   role: Role;
   highlight_color: string;
   receives_admin_fee: boolean;
+  receives_exchange_fee: boolean;
   created_at: string;
 }
 
@@ -63,6 +64,59 @@ export interface Payment {
   loan_id: string;
   amount: number;
   date_received: string;
+  note: string;
+  created_by: string;
+  created_at: string;
+}
+
+export type ExchangeTransactionType = "cash_in" | "cash_out";
+export type ExchangeTransactionStatus = "completed" | "cancelled";
+export type BalanceType = "physical" | "digital";
+export type PoolTransferDirection =
+  | "lending_to_exchange_physical"
+  | "lending_to_exchange_digital"
+  | "exchange_physical_to_lending"
+  | "exchange_digital_to_lending";
+
+export interface ExchangeTransaction {
+  id: string;
+  type: ExchangeTransactionType;
+  funding_source: FundingSource;
+  amount: number;
+  fee: number;
+  fee_is_manual: boolean;
+  counterparty_name: string;
+  date: string;
+  note: string;
+  status: ExchangeTransactionStatus;
+  created_by: string;
+  created_at: string;
+}
+
+export interface ExchangeTransactionShare {
+  id: string;
+  transaction_id: string;
+  friend_id: string;
+  profit_share: number;
+  created_at: string;
+}
+
+export interface ExchangeCapitalDeposit {
+  id: string;
+  friend_id: string;
+  balance_type: BalanceType;
+  amount: number;
+  date: string;
+  note: string;
+  created_by: string;
+  created_at: string;
+}
+
+export interface PoolTransfer {
+  id: string;
+  direction: PoolTransferDirection;
+  amount: number;
+  date: string;
   note: string;
   created_by: string;
   created_at: string;

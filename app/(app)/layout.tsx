@@ -9,15 +9,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const profile = await getCurrentProfile();
   if (!profile) redirect("/login");
 
-  const navLinks = [
-    { href: "/", label: "Dashboard" },
-    { href: "/loans", label: "Loans" },
-    { href: "/pool", label: "Pool" },
-    { href: "/borrowers", label: "Borrowers" },
-    { href: "/reports", label: "Reports" },
-    { href: "/me", label: "Me" },
-  ];
-
   return (
     <div className="flex min-h-screen flex-col">
       <header className="border-b border-border">
@@ -34,6 +25,9 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               aria-hidden
             />
             <span className="truncate text-muted">{profile.full_name || profile.email}</span>
+            <Link href="/reports" className="text-muted hover:text-foreground">
+              Reports
+            </Link>
             <RefreshButton />
             <form action={signOut} className="shrink-0">
               <button type="submit" className="text-accent hover:opacity-80">
@@ -42,24 +36,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             </form>
           </div>
         </div>
-
-        <nav className="mx-auto flex max-w-5xl items-center gap-5 overflow-x-auto px-4 pb-3 text-sm whitespace-nowrap">
-          {navLinks.map((link) => (
-            <Link key={link.href} href={link.href} className="text-muted hover:text-foreground">
-              {link.label}
-            </Link>
-          ))}
-          {(profile.role === "owner" || profile.role === "contributor") && (
-            <Link href="/loans/new" className="text-accent hover:opacity-80">
-              + New loan
-            </Link>
-          )}
-          {(profile.receives_admin_fee || profile.role === "owner") && (
-            <Link href="/commissions" className="text-muted hover:text-foreground">
-              Commissions
-            </Link>
-          )}
-        </nav>
       </header>
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-8">{children}</main>

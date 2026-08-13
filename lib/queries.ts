@@ -1,5 +1,16 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Borrower, Loan, LoanContribution, Payment, PoolDeposit, Profile } from "@/lib/types";
+import type {
+  Borrower,
+  ExchangeCapitalDeposit,
+  ExchangeTransaction,
+  ExchangeTransactionShare,
+  Loan,
+  LoanContribution,
+  Payment,
+  PoolDeposit,
+  PoolTransfer,
+  Profile,
+} from "@/lib/types";
 
 export async function getProfiles(): Promise<Profile[]> {
   const supabase = await createClient();
@@ -77,5 +88,51 @@ export async function getCoreFriends(): Promise<Profile[]> {
     .select("*")
     .in("role", ["owner", "contributor"])
     .order("full_name");
+  return data ?? [];
+}
+
+export async function getExchangeTransactions(): Promise<ExchangeTransaction[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("exchange_transactions")
+    .select("*")
+    .order("date", { ascending: false });
+  return data ?? [];
+}
+
+export async function getExchangeTransaction(id: string): Promise<ExchangeTransaction | null> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("exchange_transactions").select("*").eq("id", id).single();
+  return data;
+}
+
+export async function getSharesForTransaction(transactionId: string): Promise<ExchangeTransactionShare[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("exchange_transaction_shares")
+    .select("*")
+    .eq("transaction_id", transactionId)
+    .order("created_at");
+  return data ?? [];
+}
+
+export async function getAllExchangeTransactionShares(): Promise<ExchangeTransactionShare[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("exchange_transaction_shares").select("*");
+  return data ?? [];
+}
+
+export async function getExchangeCapitalDeposits(): Promise<ExchangeCapitalDeposit[]> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("exchange_capital_deposits")
+    .select("*")
+    .order("date", { ascending: false });
+  return data ?? [];
+}
+
+export async function getPoolTransfers(): Promise<PoolTransfer[]> {
+  const supabase = await createClient();
+  const { data } = await supabase.from("pool_transfers").select("*").order("date", { ascending: false });
   return data ?? [];
 }

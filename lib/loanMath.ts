@@ -1,4 +1,4 @@
-import type { Loan, LoanContribution, Payment, PoolDeposit, Profile } from "@/lib/types";
+import type { Loan, LoanContribution, Payment, PoolDeposit, PoolTransfer, Profile } from "@/lib/types";
 
 /**
  * Total interest owed on a loan. Dispatches on interest_type so a new
@@ -97,6 +97,7 @@ export interface PoolSummary {
   totalReturnedFromRepaid: number;
   currentlyLentFromPool: number;
   lostToDefaultedPool: number;
+  netTransfersOut: number;
   available: number;
   totalPool: number;
 }
@@ -107,12 +108,15 @@ export interface PoolSummary {
  * funded) flows back into the pool -- only a pool-funded loan's principal
  * counts as "currently lent" or "lost to default" against it, since an
  * individually-funded loan's principal never came from the pool to begin
- * with.
+ * with. `transfers` moves value to/from LendenX's own pool -- money sent to
+ * LendenX (`lending_to_exchange_*`) reduces what's available here, money
+ * sent back (`exchange_*_to_lending`) increases it.
  */
 export function poolSummary(
   loans: Loan[],
   paymentsByLoan: Map<string, Payment[]>,
   deposits: PoolDeposit[],
+  transfers: PoolTransfer[] = [],
 ): PoolSummary {
   const totalDeposited = deposits.reduce((sum, d) => sum + d.amount, 0);
 
@@ -134,8 +138,26 @@ export function poolSummary(
     }
   }
 
-  const available = totalDeposited + totalReturnedFromRepaid - currentlyLentFromPool - lostToDefaultedPool;
+  let netTransfersOut = 0;
+  for (const t of transfers) {
+    if (t.direction === "lending_to_exchange_physical" || t.direction === "lending_to_exchange_digital") {
+      netTransfersOut += t.amount;
+    } else {
+      netTransfersOut -= t.amount;
+    }
+  }
+
+  const available =
+    totalDeposited + totalReturnedFromRepaid - currentlyLentFromPool - lostToDefaultedPool - netTransfersOut;
   const totalPool = available + currentlyLentFromPool;
 
-  return { totalDeposited, totalReturnedFromRepaid, currentlyLentFromPool, lostToDefaultedPool, available, totalPool };
+  return {
+    totalDeposited,
+    totalReturnedFromRepaid,
+    currentlyLentFromPool,
+    lostToDefaultedPool,
+    netTransfersOut,
+    available,
+    totalPool,
+  };
 }
