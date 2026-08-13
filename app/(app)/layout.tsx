@@ -19,12 +19,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           </Link>
 
           <div className="flex min-w-0 items-center gap-3 text-sm">
-            <span
-              className="h-2.5 w-2.5 shrink-0 rounded-full"
-              style={{ backgroundColor: profile.highlight_color }}
-              aria-hidden
-            />
-            <span className="truncate text-muted">{profile.full_name || profile.email}</span>
             <Link href="/" aria-label="Home" title="Back to Lenden / LendenX" className="shrink-0 text-muted hover:text-foreground">
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path
@@ -35,6 +29,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 />
               </svg>
             </Link>
+            <span
+              className="h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{ backgroundColor: profile.highlight_color }}
+              aria-hidden
+            />
+            <span className="truncate text-muted">{profile.full_name || profile.email}</span>
             <Link href="/reports" className="text-muted hover:text-foreground">
               Reports
             </Link>
