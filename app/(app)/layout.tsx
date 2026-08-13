@@ -25,6 +25,16 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               aria-hidden
             />
             <span className="truncate text-muted">{profile.full_name || profile.email}</span>
+            <Link href="/" aria-label="Home" title="Back to Lenden / LendenX" className="shrink-0 text-muted hover:text-foreground">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path
+                  d="M2 7.5 8 2l6 5.5V14a1 1 0 0 1-1 1h-3v-4.5H6V15H3a1 1 0 0 1-1-1V7.5Z"
+                  stroke="currentColor"
+                  strokeWidth="1.3"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </Link>
             <Link href="/reports" className="text-muted hover:text-foreground">
               Reports
             </Link>
