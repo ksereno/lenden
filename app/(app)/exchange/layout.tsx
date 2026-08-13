@@ -15,7 +15,15 @@ export default async function ExchangeLayout({ children }: { children: React.Rea
     <div className="exchange-theme flex flex-col gap-8">
       <nav className="flex items-center gap-5 overflow-x-auto border-b border-border pb-3 text-sm whitespace-nowrap">
         {navLinks.map((link) => (
-          <Link key={link.href} href={link.href} className="text-muted hover:text-foreground">
+          <Link
+            key={link.href}
+            href={link.href}
+            className={
+              link.label === "Reports"
+                ? "text-accent hover:opacity-80"
+                : "text-muted hover:text-foreground"
+            }
+          >
             {link.label}
           </Link>
         ))}
