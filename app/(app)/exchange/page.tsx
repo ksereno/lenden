@@ -23,7 +23,11 @@ export default async function ExchangeDashboardPage() {
     getCurrentProfile(),
   ]);
 
-  const { physicalBalance, digitalBalance } = exchangePoolBalance(transactions, capitalDeposits, transfers);
+  const { physicalBalance, digitalBalance, profit, totalAvailable } = exchangePoolBalance(
+    transactions,
+    capitalDeposits,
+    transfers,
+  );
 
   const sharesByTx = new Map<string, ExchangeTransactionShare[]>();
   for (const s of allShares) {
@@ -54,10 +58,22 @@ export default async function ExchangeDashboardPage() {
         <p className="mt-1 text-sm text-muted">Cash in / cash out exchange.</p>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <StatCard label="Physical balance" value={formatMoney(physicalBalance)} />
-        <StatCard label="Digital balance" value={formatMoney(digitalBalance)} />
-        <StatCard label="Total transactions" value={String(transactions.filter((t) => t.status !== "cancelled").length)} />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <StatCard label="Profit" value={formatMoney(profit)} />
+        <StatCard label="Total pool available" value={formatMoney(totalAvailable)} />
+      </div>
+      <p className="-mt-6 text-xs text-muted">
+        The amount used to fund a cash-in/cash-out just cycles between physical and digital — it&apos;s never
+        retained on its own. Only the fee stays in the account as profit.
+      </p>
+
+      <div>
+        <h2 className="mb-3 text-sm font-medium text-muted">On hand right now</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <StatCard label="Physical" value={formatMoney(physicalBalance)} />
+          <StatCard label="Digital" value={formatMoney(digitalBalance)} />
+          <StatCard label="Total transactions" value={String(transactions.filter((t) => t.status !== "cancelled").length)} />
+        </div>
       </div>
 
       <div>

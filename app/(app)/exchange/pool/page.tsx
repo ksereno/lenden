@@ -36,7 +36,11 @@ export default async function ExchangePoolPage({
   ]);
 
   const profileById = new Map(profiles.map((p) => [p.id, p]));
-  const { physicalBalance, digitalBalance } = exchangePoolBalance(transactions, capitalDeposits, transfers);
+  const { physicalBalance, digitalBalance, profit, totalAvailable } = exchangePoolBalance(
+    transactions,
+    capitalDeposits,
+    transfers,
+  );
   const poolTransactions = transactions.filter((t) => t.funding_source === "pool" && t.status !== "cancelled");
   const canAct = currentProfile?.role === "owner" || currentProfile?.role === "contributor";
   const today = new Date().toISOString().slice(0, 10);
@@ -45,7 +49,9 @@ export default async function ExchangePoolPage({
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="text-xl font-semibold text-foreground">Pool</h1>
-        <p className="mt-1 text-sm text-muted">LendenX&apos;s own physical cash and digital wallet balance.</p>
+        <p className="mt-1 text-sm text-muted">
+          Profit from every transaction, plus whatever&apos;s been deposited as shared capital.
+        </p>
       </div>
 
       {error && (
@@ -55,8 +61,20 @@ export default async function ExchangePoolPage({
       )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <StatCard label="Physical balance" value={formatMoney(physicalBalance)} />
-        <StatCard label="Digital balance" value={formatMoney(digitalBalance)} />
+        <StatCard label="Profit" value={formatMoney(profit)} />
+        <StatCard label="Total pool available" value={formatMoney(totalAvailable)} />
+      </div>
+
+      <div>
+        <h2 className="mb-3 text-sm font-medium text-muted">On hand right now</h2>
+        <p className="mb-3 text-xs text-muted">
+          The amount used to fund a cash-in/cash-out cycles between these two — it&apos;s not extra money on top
+          of the pool above.
+        </p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <StatCard label="Physical" value={formatMoney(physicalBalance)} />
+          <StatCard label="Digital" value={formatMoney(digitalBalance)} />
+        </div>
       </div>
 
       <div>

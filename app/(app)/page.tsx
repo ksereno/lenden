@@ -28,7 +28,7 @@ export default async function HubPage() {
     return sum + Math.max(totals.balance, 0);
   }, 0);
 
-  const { physicalBalance, digitalBalance } = exchangePoolBalance(transactions, capitalDeposits, transfers);
+  const { profit, totalAvailable } = exchangePoolBalance(transactions, capitalDeposits, transfers);
 
   return (
     <div className="flex flex-col gap-6">
@@ -68,12 +68,12 @@ export default async function HubPage() {
           </div>
           <div className="flex gap-6 text-sm">
             <div>
-              <div className="text-xs text-muted">Physical</div>
-              <div className="mt-0.5 font-medium text-foreground">{formatMoney(physicalBalance)}</div>
+              <div className="text-xs text-muted">Profit</div>
+              <div className="mt-0.5 font-medium text-foreground">{formatMoney(profit)}</div>
             </div>
             <div>
-              <div className="text-xs text-muted">Digital</div>
-              <div className="mt-0.5 font-medium text-foreground">{formatMoney(digitalBalance)}</div>
+              <div className="text-xs text-muted">Total pool</div>
+              <div className="mt-0.5 font-medium text-foreground">{formatMoney(totalAvailable)}</div>
             </div>
           </div>
         </Link>

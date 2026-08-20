@@ -89,6 +89,16 @@ export function exchangeFriendShares(
 export interface ExchangePoolBalance {
   physicalBalance: number;
   digitalBalance: number;
+  /** Accumulated fees from pool-funded transactions -- the only money that
+   * actually stays in LendenX's account. The amount used to fund a
+   * cash-in/cash-out just cycles between physical and digital form; it's
+   * never retained on its own. */
+  profit: number;
+  /** profit + net capital deposited/transferred in -- always equals
+   * physicalBalance + digitalBalance, computed once here so the two figures
+   * can never drift apart. This is "the pool" in the sense people mean when
+   * they ask what LendenX actually has. */
+  totalAvailable: number;
 }
 
 /**
@@ -104,6 +114,7 @@ export function exchangePoolBalance(
 ): ExchangePoolBalance {
   let physicalBalance = 0;
   let digitalBalance = 0;
+  let profit = 0;
 
   for (const d of capitalDeposits) {
     if (d.balance_type === "physical") physicalBalance += d.amount;
@@ -126,7 +137,8 @@ export function exchangePoolBalance(
       digitalBalance += digitalAmount(tx);
       physicalBalance -= physicalAmount(tx);
     }
+    profit += tx.fee;
   }
 
-  return { physicalBalance, digitalBalance };
+  return { physicalBalance, digitalBalance, profit, totalAvailable: physicalBalance + digitalBalance };
 }

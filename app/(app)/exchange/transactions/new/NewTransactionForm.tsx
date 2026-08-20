@@ -21,9 +21,25 @@ export async function NewTransactionForm({
 }: {
   type: ExchangeTransactionType;
   fundingSource: FundingSource;
-  searchParams: { error?: string; needed?: string; available?: string; message?: string };
+  searchParams: {
+    error?: string;
+    needed?: string;
+    available?: string;
+    message?: string;
+    success?: string;
+    amount?: string;
+    fee?: string;
+  };
 }) {
-  const { error, needed, available: availableParam, message } = searchParams;
+  const {
+    error,
+    needed,
+    available: availableParam,
+    message,
+    success,
+    amount: savedAmount,
+    fee: savedFee,
+  } = searchParams;
   const typeLabel = type === "cash_in" ? "Cash In" : "Cash Out";
   const backHref = `/exchange/transactions/new/${type === "cash_in" ? "cash-in" : "cash-out"}`;
   const today = new Date().toISOString().slice(0, 10);
@@ -60,6 +76,12 @@ export async function NewTransactionForm({
         {poolBalanceLine}
       </div>
 
+      {success === "1" && (
+        <p className="rounded-lg border border-green-500/30 bg-green-500/10 px-4 py-2 text-sm text-green-400">
+          Logged — {formatMoney(Number(savedAmount ?? 0))}, fee {formatMoney(Number(savedFee ?? 0))}. Ready for the
+          next one.
+        </p>
+      )}
       {error === "invalid" && (
         <p className="rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-2 text-sm text-red-400">
           {message || "Enter a valid amount and date."}
@@ -87,6 +109,7 @@ export async function NewTransactionForm({
             step="0.01"
             min="0.01"
             required
+            autoFocus
             placeholder="0.00"
             className="rounded-lg border border-border bg-surface px-3 py-2 text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
           />

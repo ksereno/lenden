@@ -85,5 +85,5 @@ export async function createExchangeTransaction(
     }
   }
 
-  redirect(`/exchange/transactions/${tx.id}`);
+  redirect(`${basePath}?success=1&amount=${amount}&fee=${fee}`);
 }
