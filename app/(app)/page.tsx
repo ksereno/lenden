@@ -78,6 +78,17 @@ export default async function HubPage() {
           </div>
         </Link>
       </div>
+
+      <Link
+        href="/transfer"
+        className="flex items-center justify-between gap-4 rounded-lg border border-border bg-surface p-4 transition-colors hover:border-accent"
+      >
+        <div>
+          <h2 className="text-sm font-semibold text-foreground">Transfer Capital</h2>
+          <p className="mt-0.5 text-xs text-muted">Move money between Lenden and Lenden X.</p>
+        </div>
+        <span className="text-muted">→</span>
+      </Link>
     </div>
   );
 }

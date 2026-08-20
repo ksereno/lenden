@@ -54,8 +54,8 @@ export default async function PoolPage() {
         <p className="text-sm text-muted">
           Net {formatMoney(Math.abs(summary.netTransfersOut))}{" "}
           {summary.netTransfersOut > 0 ? "transferred to" : "transferred back from"}{" "}
-          <Link href="/exchange/pool" className="text-accent hover:opacity-80">
-            LendenX
+          <Link href="/transfer" className="text-accent hover:opacity-80">
+            Lenden X
           </Link>
           .
         </p>

@@ -11,12 +11,6 @@ import { formatMoney, formatDate } from "@/lib/format";
 import { StatCard } from "@/components/StatCard";
 import { ExchangeStatusPill } from "@/components/ExchangeStatusPill";
 import { FriendBadge } from "@/components/FriendBadge";
-import { createTransfer } from "./actions";
-
-const DIRECTION_LABELS: Record<string, string> = {
-  lending_to_exchange: "Lenden to Lenden X",
-  exchange_to_lending: "Lenden X to Lenden",
-};
 
 export default async function ExchangePoolPage({
   searchParams,
@@ -38,14 +32,16 @@ export default async function ExchangePoolPage({
   const { totalCashIn, totalCashOut } = exchangeVolume(transactions);
   const poolTransactions = transactions.filter((t) => t.funding_source === "pool" && t.status !== "cancelled");
   const canAct = currentProfile?.role === "owner" || currentProfile?.role === "contributor";
-  const today = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="text-xl font-semibold text-foreground">Pool</h1>
         <p className="mt-1 text-sm text-muted">
-          Profit from every transaction, plus whatever&apos;s been deposited as shared capital.
+          Profit from every transaction, plus whatever&apos;s been deposited as shared capital.{" "}
+          <Link href="/transfer" className="text-accent hover:opacity-80">
+            Manage transfers with Lenden →
+          </Link>
         </p>
       </div>
 
@@ -152,80 +148,6 @@ export default async function ExchangePoolPage({
           </div>
         )}
       </div>
-
-      <div>
-        <h2 className="mb-3 text-sm font-medium text-muted">Transfers with Lenden</h2>
-        {transfers.length === 0 ? (
-          <p className="text-sm text-muted">No transfers logged yet.</p>
-        ) : (
-          <div className="overflow-x-auto rounded-lg border border-border">
-            <table className="w-full text-sm">
-              <thead className="bg-surface text-left text-muted">
-                <tr>
-                  <th className="px-4 py-2 font-medium">Direction</th>
-                  <th className="px-4 py-2 font-medium">Amount</th>
-                  <th className="px-4 py-2 font-medium">Date</th>
-                  <th className="px-4 py-2 font-medium">Note</th>
-                </tr>
-              </thead>
-              <tbody>
-                {transfers.map((t) => (
-                  <tr key={t.id} className="border-t border-border">
-                    <td className="px-4 py-2 text-foreground">{DIRECTION_LABELS[t.direction]}</td>
-                    <td className="px-4 py-2 text-foreground">{formatMoney(t.amount)}</td>
-                    <td className="px-4 py-2 text-muted">{formatDate(t.date)}</td>
-                    <td className="px-4 py-2 text-muted">{t.note || "—"}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
-
-      {canAct && (
-        <div className="max-w-sm">
-          <h2 className="mb-3 text-sm font-medium text-muted">Transfer capital</h2>
-          <form action={createTransfer} className="flex flex-col gap-3">
-            <select
-              name="direction"
-              required
-              className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
-            >
-              <option value="lending_to_exchange">Lenden to Lenden X</option>
-              <option value="exchange_to_lending">Lenden X to Lenden</option>
-            </select>
-            <input
-              type="number"
-              name="amount"
-              step="0.01"
-              min="0.01"
-              required
-              placeholder="Amount"
-              className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
-            />
-            <input
-              type="date"
-              name="date"
-              required
-              defaultValue={today}
-              className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
-            />
-            <input
-              type="text"
-              name="note"
-              placeholder="Note (optional)"
-              className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground placeholder:text-muted focus:border-accent focus:outline-none"
-            />
-            <button
-              type="submit"
-              className="self-start rounded-lg bg-accent px-3 py-2 text-sm font-medium text-accent-foreground"
-            >
-              Log transfer
-            </button>
-          </form>
-        </div>
-      )}
     </div>
   );
 }
