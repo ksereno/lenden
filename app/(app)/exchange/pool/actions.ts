@@ -3,7 +3,17 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import type { BalanceType, PoolTransferDirection } from "@/lib/types";
+import {
+  getLoans,
+  getAllPayments,
+  getPoolDeposits,
+  getPoolTransfers,
+  getExchangeTransactions,
+  getExchangeCapitalDeposits,
+} from "@/lib/queries";
+import { poolSummary } from "@/lib/loanMath";
+import { exchangePoolBalance } from "@/lib/exchangeMath";
+import type { BalanceType, Payment, PoolTransferDirection } from "@/lib/types";
 
 export async function addCapitalDeposit(formData: FormData) {
   const friend_id = String(formData.get("friend_id") ?? "");
@@ -51,6 +61,36 @@ export async function createTransfer(formData: FormData) {
 
   if (amount <= 0 || !date || !validDirections.includes(direction)) {
     redirect(`/exchange/pool?error=transfer-invalid&message=${encodeURIComponent("Enter a valid amount, direction, and date.")}`);
+  }
+
+  if (direction === "lending_to_exchange_physical" || direction === "lending_to_exchange_digital") {
+    const [loans, allPayments, deposits, transfers] = await Promise.all([
+      getLoans(),
+      getAllPayments(),
+      getPoolDeposits(),
+      getPoolTransfers(),
+    ]);
+    const paymentsByLoan = new Map<string, Payment[]>();
+    for (const p of allPayments) {
+      const list = paymentsByLoan.get(p.loan_id) ?? [];
+      list.push(p);
+      paymentsByLoan.set(p.loan_id, list);
+    }
+    const { available } = poolSummary(loans, paymentsByLoan, deposits, transfers);
+    if (amount > available) {
+      redirect(`/exchange/pool?error=transfer-insufficient&message=${encodeURIComponent(`Lenden's pool only has ${available.toFixed(2)} available — that transfer would overdraw it.`)}`);
+    }
+  } else {
+    const [transactions, capitalDeposits, transfers] = await Promise.all([
+      getExchangeTransactions(),
+      getExchangeCapitalDeposits(),
+      getPoolTransfers(),
+    ]);
+    const { physicalBalance, digitalBalance } = exchangePoolBalance(transactions, capitalDeposits, transfers);
+    const available = direction === "exchange_physical_to_lending" ? physicalBalance : digitalBalance;
+    if (amount > available) {
+      redirect(`/exchange/pool?error=transfer-insufficient&message=${encodeURIComponent(`LendenX only has ${available.toFixed(2)} available in that balance — that transfer would overdraw it.`)}`);
+    }
   }
 
   const supabase = await createClient();
