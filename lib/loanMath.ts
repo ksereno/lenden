@@ -1,4 +1,4 @@
-import type { Loan, LoanContribution, Payment, PoolDeposit, PoolTransfer, Profile } from "@/lib/types";
+import type { Borrower, Loan, LoanContribution, Payment, PoolDeposit, PoolTransfer, Profile } from "@/lib/types";
 
 /**
  * Total interest owed on a loan. Dispatches on interest_type so a new
@@ -160,4 +160,94 @@ export function poolSummary(
     available,
     totalPool,
   };
+}
+
+export interface PoolActivityEvent {
+  date: string;
+  description: string;
+  amount: number;
+  approximateDate: boolean;
+}
+
+/**
+ * Plain-language, chronological timeline of every event that moves the
+ * Lenden pool balance -- deposits, pool-funded loans going out, loans
+ * (any funding source) coming back on repayment, defaults, and transfers
+ * to/from LendenX. Summing every event's amount always equals
+ * poolSummary().available for the same inputs -- this is the same math,
+ * just itemized instead of aggregated.
+ *
+ * There is no column tracking exactly when a loan's status flipped to
+ * "repaid" or "defaulted", so those events are dated by date_issued as the
+ * closest available approximation (flagged via `approximateDate`).
+ */
+export function poolActivity(
+  loans: Loan[],
+  borrowerById: Map<string, Borrower>,
+  paymentsByLoan: Map<string, Payment[]>,
+  deposits: PoolDeposit[],
+  friendById: Map<string, Profile>,
+  transfers: PoolTransfer[],
+): PoolActivityEvent[] {
+  const events: PoolActivityEvent[] = [];
+
+  for (const d of deposits) {
+    const friend = friendById.get(d.friend_id);
+    events.push({
+      date: d.date,
+      description: `${friend?.full_name || "Someone"} added funds${d.note ? ` — ${d.note}` : ""}`,
+      amount: d.amount,
+      approximateDate: false,
+    });
+  }
+
+  for (const loan of loans) {
+    if (loan.status === "cancelled") continue;
+    const borrower = borrowerById.get(loan.borrower_id);
+    const name = borrower?.name || "a borrower";
+    const payments = paymentsByLoan.get(loan.id) ?? [];
+    const totals = loanTotals(loan, payments);
+
+    if (loan.funding_source === "pool" && loan.status === "open") {
+      events.push({
+        date: loan.date_issued,
+        description: `Lent to ${name}`,
+        amount: -loan.principal,
+        approximateDate: false,
+      });
+    } else if (loan.funding_source === "pool" && loan.status === "defaulted") {
+      events.push({
+        date: loan.date_issued,
+        description: `${name}'s loan defaulted — money lost from the pool`,
+        amount: -loan.principal,
+        approximateDate: true,
+      });
+    }
+
+    if (loan.status === "repaid") {
+      const fundingNote = loan.funding_source === "individual" ? " (was funded by specific friends, not the pool)" : "";
+      events.push({
+        date: loan.date_issued,
+        description: `${name}'s loan marked repaid — principal + interest credited back${fundingNote}`,
+        amount: totals.totalOwed,
+        approximateDate: true,
+      });
+    }
+  }
+
+  for (const t of transfers) {
+    const toExchange = t.direction.startsWith("lending_to_exchange");
+    const balanceType = t.direction.endsWith("physical") ? "physical" : "digital";
+    events.push({
+      date: t.date,
+      description: toExchange
+        ? `Sent to LendenX (${balanceType})${t.note ? ` — ${t.note}` : ""}`
+        : `Received back from LendenX (${balanceType})${t.note ? ` — ${t.note}` : ""}`,
+      amount: toExchange ? -t.amount : t.amount,
+      approximateDate: false,
+    });
+  }
+
+  events.sort((a, b) => a.date.localeCompare(b.date));
+  return events;
 }

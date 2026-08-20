@@ -39,7 +39,9 @@ export default async function PoolPage() {
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="text-xl font-semibold text-foreground">Pool</h1>
-        <p className="mt-1 text-sm text-muted">The group&apos;s shared lending fund.</p>
+        <p className="mt-1 text-sm text-muted">
+          The group&apos;s shared lending fund. <Link href="/lenden/pool/activity" className="text-accent hover:opacity-80">See the full activity log →</Link>
+        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">

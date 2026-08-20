@@ -1,0 +1,575 @@
+<title>LendenX Onboarding</title>
+<style>
+  :root {
+    --bg: #1c1b1a;
+    --surface: #262624;
+    --surface-2: #30302e;
+    --border: #3e3e3a;
+    --text: #fafaf7;
+    --text-muted: #a8a69d;
+    --lenden: #d97757;
+    --lendenx: #39a0ed;
+    --warn: #6b2737;
+    --warn-text: #e7a7b3;
+
+    --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 44rem;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  /* ---- header ---- */
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--lendenx);
+    font-weight: 600;
+  }
+
+  h1 {
+    margin: 0.5rem 0 0;
+    font-size: clamp(1.9rem, 4vw, 2.6rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    text-wrap: balance;
+  }
+
+  .lede {
+    margin-top: 1rem;
+    font-size: 1.0625rem;
+    color: var(--text-muted);
+    max-width: 38rem;
+  }
+
+  .lede strong { color: var(--text); font-weight: 600; }
+
+  /* ---- contents ---- */
+
+  .toc {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    background: var(--surface);
+  }
+
+  .toc-label {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin: 0 0 0.6rem;
+  }
+
+  .toc ol {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+  }
+
+  .toc a {
+    color: var(--text);
+    text-decoration: none;
+    display: flex;
+    gap: 0.6rem;
+  }
+
+  .toc a:hover { color: var(--lendenx); }
+
+  .toc a:focus-visible { outline: 2px solid var(--lendenx); outline-offset: 2px; border-radius: 4px; }
+
+  .toc-num {
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    font-variant-numeric: tabular-nums;
+    width: 1.2rem;
+  }
+
+  /* ---- sections ---- */
+
+  section {
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    scroll-margin-top: 1.5rem;
+  }
+
+  section:first-of-type { border-top: none; padding-top: 0; }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.35rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+  }
+
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .badge.lenden { color: var(--lenden); background: color-mix(in srgb, var(--lenden) 16%, transparent); }
+  .badge.lendenx { color: var(--lendenx); background: color-mix(in srgb, var(--lendenx) 16%, transparent); }
+
+  p { margin: 0; color: var(--text); }
+  p.muted { color: var(--text-muted); }
+
+  a { color: var(--lendenx); }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.05em 0.4em;
+  }
+
+  /* ---- process steps ---- */
+
+  .steps {
+    counter-reset: step;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .steps li {
+    counter-increment: step;
+    display: grid;
+    grid-template-columns: 1.75rem 1fr;
+    gap: 0.9rem;
+    align-items: start;
+  }
+
+  .steps li::before {
+    content: counter(step);
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--surface);
+    background: var(--step-color, var(--lendenx));
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .steps.cash-in { --step-color: var(--lendenx); }
+  .steps.cash-out { --step-color: var(--lendenx); }
+
+  .flow {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 0.9rem 1.1rem;
+  }
+
+  .flow-node {
+    padding: 0.35rem 0.7rem;
+    border-radius: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  .flow-arrow { color: var(--text-muted); font-family: var(--font-mono); }
+
+  /* ---- two-column feature grid ---- */
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: 1rem;
+  }
+
+  .card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .card h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 700;
+  }
+
+  .card p { font-size: 0.9rem; color: var(--text-muted); }
+
+  .card .tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  /* ---- fee table ---- */
+
+  .table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    min-width: 26rem;
+  }
+
+  thead th {
+    text-align: left;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    background: var(--surface-2);
+    padding: 0.7rem 1rem;
+  }
+
+  tbody td {
+    padding: 0.7rem 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  tbody tr:nth-child(even) { background: color-mix(in srgb, var(--surface-2) 45%, transparent); }
+
+  td.num, th.num { text-align: right; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  .example {
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .example strong { color: var(--text); font-weight: 600; }
+
+  /* ---- fee split ---- */
+
+  .split-bar {
+    display: flex;
+    height: 2.25rem;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .split-bar > div {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--surface);
+    white-space: nowrap;
+  }
+
+  .split-katch { width: 10%; background: #c9a13b; }
+  .split-tita { width: 10%; background: #9a6fb0; }
+  .split-group { width: 80%; background: var(--lendenx); }
+
+  .split-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  .split-legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+
+  .dot { width: 0.6rem; height: 0.6rem; border-radius: 50%; display: inline-block; }
+
+  /* ---- callouts ---- */
+
+  .callout {
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--callout-color, var(--lendenx));
+    border-radius: 8px;
+    padding: 0.9rem 1.1rem;
+    background: var(--surface);
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .callout strong { color: var(--text); }
+
+  .callout.warn { --callout-color: var(--warn); }
+  .callout.warn strong { color: var(--warn-text); }
+
+  /* ---- reports list ---- */
+
+  .path-list { display: flex; flex-direction: column; gap: 0.75rem; margin: 0; padding: 0; list-style: none; }
+
+  .path-list li {
+    display: grid;
+    grid-template-columns: 9.5rem 1fr;
+    gap: 1rem;
+    align-items: baseline;
+    font-size: 0.9rem;
+  }
+
+  .path-list code { color: var(--lendenx); background: none; border: none; padding: 0; font-size: 0.85rem; }
+
+  /* ---- footer ---- */
+
+  footer {
+    padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+
+  @media (max-width: 480px) {
+    .path-list li { grid-template-columns: 1fr; gap: 0.2rem; }
+  }
+</style>
+
+<div class="page">
+
+  <header>
+    <div class="eyebrow">New in Lenden</div>
+    <h1>Say hello to LendenX — our GCash cash-in / cash-out side, now inside Lenden.</h1>
+    <p class="lede">
+      Same login, same five of us. Lenden now covers <strong>two</strong> businesses instead of one:
+      the lending side you already know, and a new cash-in/cash-out side. Here's how it works and what's new.
+    </p>
+  </header>
+
+  <nav class="toc" aria-label="Contents">
+    <p class="toc-label">On this page</p>
+    <ol>
+      <li><a href="#getting-around"><span class="toc-num">01</span>Getting around</a></li>
+      <li><a href="#cash-in"><span class="toc-num">02</span>How a cash‑in works</a></li>
+      <li><a href="#cash-out"><span class="toc-num">03</span>How a cash‑out works</a></li>
+      <li><a href="#funding"><span class="toc-num">04</span>Pool vs. specific friends</a></li>
+      <li><a href="#fees"><span class="toc-num">05</span>The fee schedule</a></li>
+      <li><a href="#split"><span class="toc-num">06</span>Where the fee goes</a></li>
+      <li><a href="#add-funds"><span class="toc-num">07</span>Adding funds (not a transaction)</a></li>
+      <li><a href="#transfers"><span class="toc-num">08</span>Moving money between the two</a></li>
+      <li><a href="#reports"><span class="toc-num">09</span>Checking earnings</a></li>
+    </ol>
+  </nav>
+
+  <section id="getting-around">
+    <div class="section-head"><h2>Getting around</h2></div>
+    <p>
+      Sign in like always. You'll land on a chooser screen with two tiles — pick one:
+    </p>
+    <div class="grid-2">
+      <div class="card">
+        <span class="tag" style="color: var(--lenden);">Orange</span>
+        <h3>Lenden</h3>
+        <p>The lending business. Loans, borrowers, interest — exactly what you're used to.</p>
+      </div>
+      <div class="card">
+        <span class="tag" style="color: var(--lendenx);">Blue</span>
+        <h3>LendenX</h3>
+        <p>The new cash‑in / cash‑out business. Its own balance, its own transactions, color-coded blue everywhere.</p>
+      </div>
+    </div>
+    <p class="muted">
+      From inside either one, tap the small house icon in the top-left of the header to jump back to that chooser
+      at any time. The <strong style="color: var(--text);">Reports</strong> link next to it always shows your
+      combined earnings across both businesses.
+    </p>
+  </section>
+
+  <section id="cash-in">
+    <div class="section-head">
+      <h2>How a cash‑in works</h2>
+      <span class="badge lendenx">Cash In</span>
+    </div>
+    <div class="flow">
+      <div class="flow-node">Customer's cash</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node">You</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node">Customer's GCash</div>
+    </div>
+    <p>Customer wants to load money onto their GCash. In the app:</p>
+    <ol class="steps cash-in">
+      <li>Customer hands you physical cash.</li>
+      <li>You send the equivalent amount to their GCash.</li>
+      <li>The small difference between what they gave you and what you sent is the fee — that's the profit, kept as physical cash on hand.</li>
+    </ol>
+    <p class="muted">In the app: <code>+ New transaction → Cash In</code>, then pick funding, then enter the amount. The fee is calculated for you.</p>
+  </section>
+
+  <section id="cash-out">
+    <div class="section-head">
+      <h2>How a cash‑out works</h2>
+      <span class="badge lendenx">Cash Out</span>
+    </div>
+    <div class="flow">
+      <div class="flow-node">Customer's GCash</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node">You</div>
+      <span class="flow-arrow">→</span>
+      <div class="flow-node">Customer's cash</div>
+    </div>
+    <p>Customer wants to withdraw money out of GCash. Same idea in reverse:</p>
+    <ol class="steps cash-out">
+      <li>Customer sends you GCash.</li>
+      <li>You hand them the equivalent amount in physical cash.</li>
+      <li>The difference is the fee, this time kept in the GCash balance.</li>
+    </ol>
+    <p class="muted">In the app: <code>+ New transaction → Cash Out</code> — same flow, same fee schedule either direction.</p>
+  </section>
+
+  <section id="funding">
+    <div class="section-head"><h2>Pool vs. specific friends</h2></div>
+    <p>Every cash‑in or cash‑out asks how it's funded:</p>
+    <div class="grid-2">
+      <div class="card">
+        <h3>From the shared pool</h3>
+        <p>Drawn from LendenX's own balance. The fee splits equally, five ways, automatically.</p>
+      </div>
+      <div class="card">
+        <h3>Specific friends</h3>
+        <p>One of us fronted our own cash or GCash for this one. We manually enter how the fee is split, since it's our own money in play.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="fees">
+    <div class="section-head"><h2>The fee schedule</h2></div>
+    <p>Same table, whether it's a cash‑in or a cash‑out — it's based on the amount only.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>Amount</th><th class="num">Fee</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>₱1 – ₱299</td><td class="num">₱10</td></tr>
+          <tr><td>₱300 – ₱599</td><td class="num">₱15</td></tr>
+          <tr><td>₱600 – ₱1,000</td><td class="num">₱20</td></tr>
+          <tr><td>Every extra ₱1,000 after that</td><td class="num">+₱20</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="example">
+      Example — <strong>₱1,299</strong>: ₱20 for the first ₱1,000, plus ₱10 for the ₱299 left over
+      → <strong>₱30 fee</strong>.
+    </p>
+    <div class="callout">
+      <strong>Odd amount, negotiated fee, whatever the exception is?</strong>
+      <span>There's a manual fee field for that. It's meant to be rare — the schedule above is the default for everything else.</span>
+    </div>
+  </section>
+
+  <section id="split">
+    <div class="section-head"><h2>Where the fee goes</h2></div>
+    <p>Two fixed cuts come off the top of every transaction's fee, before anyone's share:</p>
+    <div class="split-bar">
+      <div class="split-katch">10%</div>
+      <div class="split-tita">10%</div>
+      <div class="split-group">80%</div>
+    </div>
+    <div class="split-legend">
+      <span><span class="dot" style="background:#c9a13b;"></span>Katch — every transaction, on top of her regular share</span>
+      <span><span class="dot" style="background:#9a6fb0;"></span>Tita A — outside the group, her running total lives on the LendenX Reports page</span>
+      <span><span class="dot" style="background:var(--lendenx);"></span>The rest — split per the funding choice above</span>
+    </div>
+  </section>
+
+  <section id="add-funds">
+    <div class="section-head">
+      <h2>Adding funds (not a transaction)</h2>
+      <span class="badge lendenx">Add Funds</span>
+    </div>
+    <p>
+      Need to top up LendenX's cash or GCash balance so there's float to work with? That's separate from logging a
+      cash‑in/cash‑out. Use <code>+ Add funds</code> — pick who's contributing, physical or digital, and the amount.
+    </p>
+    <div class="callout warn">
+      <strong>This only adds funds to the pool — no profit, no admin fee.</strong>
+      <span>It's capital, not a sale. Same warning shows in the app itself so it's never confused with a real transaction.</span>
+    </div>
+  </section>
+
+  <section id="transfers">
+    <div class="section-head"><h2>Moving money between the two</h2></div>
+    <p>
+      Lenden's lending pool and LendenX's balance are kept separate on purpose — but money can move either direction
+      when needed, logged from the LendenX Pool page: lending pool → LendenX physical or digital, or back the other way.
+      Both sides' balances update to match.
+    </p>
+  </section>
+
+  <section id="reports">
+    <div class="section-head"><h2>Checking earnings</h2></div>
+    <p>Three places to look, depending on how wide a view you want:</p>
+    <ul class="path-list">
+      <li><code>Reports</code> <span>Combined — both businesses, per friend, in one table. This is the header link, reachable from anywhere.</span></li>
+      <li><code>Lenden → Reports</code> <span>Lending only — same detailed report you had before.</span></li>
+      <li><code>LendenX → Reports</code> <span>Exchange only — includes Katch's and Tita A's running totals.</span></li>
+    </ul>
+  </section>
+
+  <footer>
+    Questions or something looks off — just ask Kean.
+  </footer>
+
+</div>
