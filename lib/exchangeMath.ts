@@ -144,3 +144,23 @@ export function exchangePoolBalance(
 
   return { physicalBalance, digitalBalance, profit, totalAvailable: physicalBalance + digitalBalance };
 }
+
+export interface ExchangeVolume {
+  totalCashIn: number;
+  totalCashOut: number;
+}
+
+/** Total customer-facing amount handled by cash-ins vs cash-outs -- the
+ * `amount` field only, never the fee. Across every funding source and
+ * every transaction, not just pool-funded ones, since this is a volume
+ * metric rather than a balance. */
+export function exchangeVolume(transactions: ExchangeTransaction[]): ExchangeVolume {
+  let totalCashIn = 0;
+  let totalCashOut = 0;
+  for (const tx of transactions) {
+    if (tx.status === "cancelled") continue;
+    if (tx.type === "cash_in") totalCashIn += tx.amount;
+    else totalCashOut += tx.amount;
+  }
+  return { totalCashIn, totalCashOut };
+}

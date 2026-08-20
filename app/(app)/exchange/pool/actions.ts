@@ -93,10 +93,12 @@ export async function createTransfer(formData: FormData) {
       getExchangeCapitalDeposits(),
       getPoolTransfers(),
     ]);
-    const { physicalBalance, digitalBalance } = exchangePoolBalance(transactions, capitalDeposits, transfers);
-    const available = direction === "exchange_physical_to_lending" ? physicalBalance : digitalBalance;
-    if (amount > available) {
-      redirect(`/exchange/pool?error=transfer-insufficient&message=${encodeURIComponent(`LendenX only has ${available.toFixed(2)} available in that balance — that transfer would overdraw it.`)}`);
+    // Funds available for a transfer out of Lenden X come from its Total
+    // Pool as a whole, not the narrower physical/digital split -- that
+    // split is just where the money currently sits, not a hard limit.
+    const { totalAvailable } = exchangePoolBalance(transactions, capitalDeposits, transfers);
+    if (amount > totalAvailable) {
+      redirect(`/exchange/pool?error=transfer-insufficient&message=${encodeURIComponent(`Lenden X's total pool only has ${totalAvailable.toFixed(2)} available — that transfer would overdraw it.`)}`);
     }
   }
 

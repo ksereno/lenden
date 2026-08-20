@@ -6,7 +6,7 @@ import {
   getProfiles,
 } from "@/lib/queries";
 import { getCurrentProfile } from "@/lib/currentProfile";
-import { exchangePoolBalance } from "@/lib/exchangeMath";
+import { exchangePoolBalance, exchangeVolume } from "@/lib/exchangeMath";
 import { formatMoney, formatDate } from "@/lib/format";
 import { StatCard } from "@/components/StatCard";
 import { ExchangeStatusPill } from "@/components/ExchangeStatusPill";
@@ -14,10 +14,10 @@ import { FriendBadge } from "@/components/FriendBadge";
 import { createTransfer } from "./actions";
 
 const DIRECTION_LABELS: Record<string, string> = {
-  lending_to_exchange_physical: "Lenden pool → LendenX physical",
-  lending_to_exchange_digital: "Lenden pool → LendenX digital",
-  exchange_physical_to_lending: "LendenX physical → Lenden pool",
-  exchange_digital_to_lending: "LendenX digital → Lenden pool",
+  lending_to_exchange_physical: "Lenden to Lenden X (Physical)",
+  lending_to_exchange_digital: "Lenden to Lenden X (Digital)",
+  exchange_physical_to_lending: "Lenden X to Lenden (Physical)",
+  exchange_digital_to_lending: "Lenden X to Lenden (Digital)",
 };
 
 export default async function ExchangePoolPage({
@@ -36,11 +36,8 @@ export default async function ExchangePoolPage({
   ]);
 
   const profileById = new Map(profiles.map((p) => [p.id, p]));
-  const { physicalBalance, digitalBalance, profit, totalAvailable } = exchangePoolBalance(
-    transactions,
-    capitalDeposits,
-    transfers,
-  );
+  const { profit, totalAvailable } = exchangePoolBalance(transactions, capitalDeposits, transfers);
+  const { totalCashIn, totalCashOut } = exchangeVolume(transactions);
   const poolTransactions = transactions.filter((t) => t.funding_source === "pool" && t.status !== "cancelled");
   const canAct = currentProfile?.role === "owner" || currentProfile?.role === "contributor";
   const today = new Date().toISOString().slice(0, 10);
@@ -66,14 +63,10 @@ export default async function ExchangePoolPage({
       </div>
 
       <div>
-        <h2 className="mb-3 text-sm font-medium text-muted">On hand right now</h2>
-        <p className="mb-3 text-xs text-muted">
-          The amount used to fund a cash-in/cash-out cycles between these two — it&apos;s not extra money on top
-          of the pool above.
-        </p>
+        <h2 className="mb-3 text-sm font-medium text-muted">Volume</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <StatCard label="Physical" value={formatMoney(physicalBalance)} />
-          <StatCard label="Digital" value={formatMoney(digitalBalance)} />
+          <StatCard label="Total Cash In" value={formatMoney(totalCashIn)} />
+          <StatCard label="Total Cash Out" value={formatMoney(totalCashOut)} />
         </div>
       </div>
 
@@ -201,10 +194,10 @@ export default async function ExchangePoolPage({
               required
               className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
             >
-              <option value="lending_to_exchange_physical">Lenden pool → LendenX physical</option>
-              <option value="lending_to_exchange_digital">Lenden pool → LendenX digital</option>
-              <option value="exchange_physical_to_lending">LendenX physical → Lenden pool</option>
-              <option value="exchange_digital_to_lending">LendenX digital → Lenden pool</option>
+              <option value="lending_to_exchange_physical">Lenden to Lenden X (Physical)</option>
+              <option value="lending_to_exchange_digital">Lenden to Lenden X (Digital)</option>
+              <option value="exchange_physical_to_lending">Lenden X to Lenden (Physical)</option>
+              <option value="exchange_digital_to_lending">Lenden X to Lenden (Digital)</option>
             </select>
             <input
               type="number"

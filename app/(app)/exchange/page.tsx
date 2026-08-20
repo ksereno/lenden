@@ -7,7 +7,7 @@ import {
   getCoreFriends,
 } from "@/lib/queries";
 import { getCurrentProfile } from "@/lib/currentProfile";
-import { exchangePoolBalance, exchangeFriendShares, exchangeFee } from "@/lib/exchangeMath";
+import { exchangePoolBalance, exchangeVolume, exchangeFriendShares, exchangeFee } from "@/lib/exchangeMath";
 import { formatMoney, formatDate } from "@/lib/format";
 import { StatCard } from "@/components/StatCard";
 import { ExchangeStatusPill } from "@/components/ExchangeStatusPill";
@@ -23,11 +23,8 @@ export default async function ExchangeDashboardPage() {
     getCurrentProfile(),
   ]);
 
-  const { physicalBalance, digitalBalance, profit, totalAvailable } = exchangePoolBalance(
-    transactions,
-    capitalDeposits,
-    transfers,
-  );
+  const { profit, totalAvailable } = exchangePoolBalance(transactions, capitalDeposits, transfers);
+  const { totalCashIn, totalCashOut } = exchangeVolume(transactions);
 
   const sharesByTx = new Map<string, ExchangeTransactionShare[]>();
   for (const s of allShares) {
@@ -62,16 +59,12 @@ export default async function ExchangeDashboardPage() {
         <StatCard label="Profit" value={formatMoney(profit)} />
         <StatCard label="Total pool available" value={formatMoney(totalAvailable)} />
       </div>
-      <p className="-mt-6 text-xs text-muted">
-        The amount used to fund a cash-in/cash-out just cycles between physical and digital — it&apos;s never
-        retained on its own. Only the fee stays in the account as profit.
-      </p>
 
       <div>
-        <h2 className="mb-3 text-sm font-medium text-muted">On hand right now</h2>
+        <h2 className="mb-3 text-sm font-medium text-muted">Volume</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <StatCard label="Physical" value={formatMoney(physicalBalance)} />
-          <StatCard label="Digital" value={formatMoney(digitalBalance)} />
+          <StatCard label="Total Cash In" value={formatMoney(totalCashIn)} />
+          <StatCard label="Total Cash Out" value={formatMoney(totalCashOut)} />
           <StatCard label="Total transactions" value={String(transactions.filter((t) => t.status !== "cancelled").length)} />
         </div>
       </div>
