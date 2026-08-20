@@ -101,11 +101,14 @@ export interface ExchangeTransactionShare {
   created_at: string;
 }
 
+export type ExchangeDepositSource = "contribution" | "other_income";
+
 export interface ExchangeCapitalDeposit {
   id: string;
   friend_id: string;
   balance_type: BalanceType;
   amount: number;
+  source: ExchangeDepositSource;
   date: string;
   note: string;
   created_by: string;

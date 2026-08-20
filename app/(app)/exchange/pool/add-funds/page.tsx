@@ -23,9 +23,10 @@ export default async function AddFundsPage({
           ← Back
         </Link>
         <h1 className="text-xl font-semibold text-foreground">Add funds</h1>
-        <p className="mt-1 text-sm text-muted">Contribute capital to the LendenX pool.</p>
+        <p className="mt-1 text-sm text-muted">Add money to the LendenX pool — either a friend&apos;s capital, or other earned income.</p>
         <p className="mt-3 text-sm font-medium" style={{ color: "#6B2737" }}>
-          This only adds funds to the pool — no profit, no admin fee.
+          A friend contribution adds no profit and no admin fee. Other income (like mobile load top-up margins)
+          counts toward Profit, same as a transaction fee — pick carefully below.
         </p>
       </div>
 
@@ -36,6 +37,19 @@ export default async function AddFundsPage({
       )}
 
       <form action={addCapitalDeposit} className="flex flex-col gap-5">
+        <label className="flex flex-col gap-1 text-sm">
+          <span className="text-muted">What is this?</span>
+          <select
+            name="source"
+            required
+            defaultValue="contribution"
+            className="rounded-lg border border-border bg-surface px-3 py-2 text-foreground focus:border-accent focus:outline-none"
+          >
+            <option value="contribution">Friend contribution (capital — no profit, no admin fee)</option>
+            <option value="other_income">Other income (e.g. mobile load — counts as profit)</option>
+          </select>
+        </label>
+
         <label className="flex flex-col gap-1 text-sm">
           <span className="text-muted">Friend</span>
           <select

@@ -134,6 +134,7 @@ export default async function ExchangePoolPage({
                 <tr>
                   <th className="px-4 py-2 font-medium">Friend</th>
                   <th className="px-4 py-2 font-medium">Balance</th>
+                  <th className="px-4 py-2 font-medium">Type</th>
                   <th className="px-4 py-2 font-medium">Amount</th>
                   <th className="px-4 py-2 font-medium">Date</th>
                   <th className="px-4 py-2 font-medium">Note</th>
@@ -146,6 +147,9 @@ export default async function ExchangePoolPage({
                     <tr key={d.id} className="border-t border-border">
                       <td className="px-4 py-2">{p ? <FriendBadge profile={p} /> : "Unknown"}</td>
                       <td className="px-4 py-2 text-muted capitalize">{d.balance_type}</td>
+                      <td className="px-4 py-2 text-muted">
+                        {d.source === "other_income" ? "Other income" : "Contribution"}
+                      </td>
                       <td className="px-4 py-2 text-foreground">{formatMoney(d.amount)}</td>
                       <td className="px-4 py-2 text-muted">{formatDate(d.date)}</td>
                       <td className="px-4 py-2 text-muted">{d.note || "—"}</td>
