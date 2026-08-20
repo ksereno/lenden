@@ -95,10 +95,14 @@ export interface ExchangePoolBalance {
    * contributed. The amount used to fund a cash-in/cash-out just cycles
    * between physical and digital form; it's never retained on its own. */
   profit: number;
-  /** profit + net capital deposited/transferred in -- always equals
-   * physicalBalance + digitalBalance, computed once here so the two figures
-   * can never drift apart. This is "the pool" in the sense people mean when
-   * they ask what LendenX actually has. */
+  /** Net capital moved in from Lenden via pool_transfers, minus what's been
+   * sent back. Deliberately NOT folded into physicalBalance/digitalBalance
+   * -- a capital transfer doesn't distinguish physical from digital, only
+   * Total Pool matters for it. */
+  netTransferIn: number;
+  /** physicalBalance + digitalBalance + netTransferIn, computed once here
+   * so the pieces can never drift apart. This is "the pool" in the sense
+   * people mean when they ask what LendenX actually has. */
   totalAvailable: number;
 }
 
@@ -116,6 +120,7 @@ export function exchangePoolBalance(
   let physicalBalance = 0;
   let digitalBalance = 0;
   let profit = 0;
+  let netTransferIn = 0;
 
   for (const d of capitalDeposits) {
     if (d.balance_type === "physical") physicalBalance += d.amount;
@@ -124,10 +129,8 @@ export function exchangePoolBalance(
   }
 
   for (const t of transfers) {
-    if (t.direction === "lending_to_exchange_physical") physicalBalance += t.amount;
-    else if (t.direction === "exchange_physical_to_lending") physicalBalance -= t.amount;
-    else if (t.direction === "lending_to_exchange_digital") digitalBalance += t.amount;
-    else if (t.direction === "exchange_digital_to_lending") digitalBalance -= t.amount;
+    if (t.direction === "lending_to_exchange") netTransferIn += t.amount;
+    else netTransferIn -= t.amount;
   }
 
   for (const tx of transactions) {
@@ -142,7 +145,13 @@ export function exchangePoolBalance(
     profit += tx.fee;
   }
 
-  return { physicalBalance, digitalBalance, profit, totalAvailable: physicalBalance + digitalBalance };
+  return {
+    physicalBalance,
+    digitalBalance,
+    profit,
+    netTransferIn,
+    totalAvailable: physicalBalance + digitalBalance + netTransferIn,
+  };
 }
 
 export interface ExchangeVolume {

@@ -72,11 +72,7 @@ export interface Payment {
 export type ExchangeTransactionType = "cash_in" | "cash_out";
 export type ExchangeTransactionStatus = "completed" | "cancelled";
 export type BalanceType = "physical" | "digital";
-export type PoolTransferDirection =
-  | "lending_to_exchange_physical"
-  | "lending_to_exchange_digital"
-  | "exchange_physical_to_lending"
-  | "exchange_digital_to_lending";
+export type PoolTransferDirection = "lending_to_exchange" | "exchange_to_lending";
 
 export interface ExchangeTransaction {
   id: string;

@@ -14,10 +14,8 @@ import { FriendBadge } from "@/components/FriendBadge";
 import { createTransfer } from "./actions";
 
 const DIRECTION_LABELS: Record<string, string> = {
-  lending_to_exchange_physical: "Lenden to Lenden X (Physical)",
-  lending_to_exchange_digital: "Lenden to Lenden X (Digital)",
-  exchange_physical_to_lending: "Lenden X to Lenden (Physical)",
-  exchange_digital_to_lending: "Lenden X to Lenden (Digital)",
+  lending_to_exchange: "Lenden to Lenden X",
+  exchange_to_lending: "Lenden X to Lenden",
 };
 
 export default async function ExchangePoolPage({
@@ -194,10 +192,8 @@ export default async function ExchangePoolPage({
               required
               className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground focus:border-accent focus:outline-none"
             >
-              <option value="lending_to_exchange_physical">Lenden to Lenden X (Physical)</option>
-              <option value="lending_to_exchange_digital">Lenden to Lenden X (Digital)</option>
-              <option value="exchange_physical_to_lending">Lenden X to Lenden (Physical)</option>
-              <option value="exchange_digital_to_lending">Lenden X to Lenden (Digital)</option>
+              <option value="lending_to_exchange">Lenden to Lenden X</option>
+              <option value="exchange_to_lending">Lenden X to Lenden</option>
             </select>
             <input
               type="number"

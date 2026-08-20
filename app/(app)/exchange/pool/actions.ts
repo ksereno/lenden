@@ -59,18 +59,13 @@ export async function createTransfer(formData: FormData) {
   const date = String(formData.get("date") ?? "");
   const note = String(formData.get("note") ?? "").trim();
 
-  const validDirections: PoolTransferDirection[] = [
-    "lending_to_exchange_physical",
-    "lending_to_exchange_digital",
-    "exchange_physical_to_lending",
-    "exchange_digital_to_lending",
-  ];
+  const validDirections: PoolTransferDirection[] = ["lending_to_exchange", "exchange_to_lending"];
 
   if (amount <= 0 || !date || !validDirections.includes(direction)) {
     redirect(`/exchange/pool?error=transfer-invalid&message=${encodeURIComponent("Enter a valid amount, direction, and date.")}`);
   }
 
-  if (direction === "lending_to_exchange_physical" || direction === "lending_to_exchange_digital") {
+  if (direction === "lending_to_exchange") {
     const [loans, allPayments, deposits, transfers] = await Promise.all([
       getLoans(),
       getAllPayments(),

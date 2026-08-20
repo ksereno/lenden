@@ -108,9 +108,9 @@ export interface PoolSummary {
  * funded) flows back into the pool -- only a pool-funded loan's principal
  * counts as "currently lent" or "lost to default" against it, since an
  * individually-funded loan's principal never came from the pool to begin
- * with. `transfers` moves value to/from LendenX's own pool -- money sent to
- * LendenX (`lending_to_exchange_*`) reduces what's available here, money
- * sent back (`exchange_*_to_lending`) increases it.
+ * with. `transfers` moves value to/from LendenX's own Total Pool -- money
+ * sent to LendenX (`lending_to_exchange`) reduces what's available here,
+ * money sent back (`exchange_to_lending`) increases it.
  */
 export function poolSummary(
   loans: Loan[],
@@ -140,11 +140,8 @@ export function poolSummary(
 
   let netTransfersOut = 0;
   for (const t of transfers) {
-    if (t.direction === "lending_to_exchange_physical" || t.direction === "lending_to_exchange_digital") {
-      netTransfersOut += t.amount;
-    } else {
-      netTransfersOut -= t.amount;
-    }
+    if (t.direction === "lending_to_exchange") netTransfersOut += t.amount;
+    else netTransfersOut -= t.amount;
   }
 
   const available =
